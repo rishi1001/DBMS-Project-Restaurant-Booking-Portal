@@ -45,7 +45,7 @@ def login():
         username=request.form['username']
         password=request.form['password']
         actual = 'ok'
-        hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) # To generate hash
+        hash_ = bcrypt.hashpw(actual.encode('utf-8'), bcrypt.gensalt()) # To generate hash
         if bcrypt.checkpw(password.encode('utf-8'), hash_): # To compare hash with unhashed if same
             print(hash_)
         print(username, password)
