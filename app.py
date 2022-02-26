@@ -1,6 +1,8 @@
 import os
 import psycopg2
-from flask import Flask, render_template, session, request, redirect, url_for
+import bcrypt
+# from flask.ext.bcrypt import Bcrypt
+from flask import Flask, render_template, session, request, redirect, url_for, g
 
 
 app = Flask(__name__)
@@ -19,6 +21,8 @@ def get_db_connection():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    if 'userid' not in session:
+        session['userid'] = -1
     if session.get('userid') > 0:
         return redirect(url_for('profile'))
     # conn = get_db_connection()
@@ -35,10 +39,15 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'userid' not in session:
+        session['userid'] = -1
     if request.method == 'POST':
         session['userid'] = -1
         username=request.form['username']
         password=request.form['password']
+        actual = 'ok'
+        hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        print(hash_)
         print(username, password)
         if 1 == 1: # authenticate user
             session['userid'] = 1
@@ -49,21 +58,29 @@ def login():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
+    if 'userid' not in session:
+        session['userid'] = -1
     session['userid'] = -1
     return redirect(url_for('home'))
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+    if 'userid' not in session:
+        session['userid'] = -1
     return render_template('home.html', sess=session)
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+    if 'userid' not in session:
+        session['userid'] = -1
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
     return render_template('profile.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if 'userid' not in session:
+        session['userid'] = -1
     if request.method == 'POST':
         session['userid'] = -1
         username=request.form['username2']
