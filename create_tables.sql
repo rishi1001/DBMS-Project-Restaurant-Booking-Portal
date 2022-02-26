@@ -11,6 +11,23 @@ drop table types cascade;
 drop table reviews cascade;
 drop database COL362project;
 create database COL362project;
+
+CREATE table IF NOT EXISTS cuisinesref(
+    cuisineid bigint,
+    name text,
+    CONSTRAINT cuisine_key PRIMARY KEY (cuisineid)
+);
+CREATE table IF NOT EXISTS listedref(
+    listedid bigint,
+    name text,
+    CONSTRAINT listed_key PRIMARY KEY (listedid)
+);
+
+CREATE table IF NOT EXISTS locationref(
+    locationid bigint,
+    name text,
+    CONSTRAINT locationid PRIMARY KEY (locationid)
+);
 CREATE table IF NOT EXISTS restaurants(
     restaurantid bigint,
     locationid bigint,
@@ -22,15 +39,10 @@ CREATE table IF NOT EXISTS restaurants(
     name text,
     url text,
     address text,
-    CONSTRAINT restaurant_key PRIMARY KEY (restaurantid)
-);
+    CONSTRAINT restaurant_key PRIMARY KEY (restaurantid),
+    CONSTRAINT listed_foreign_key FOREIGN KEY (listedid) REFERENCES listedref(listedid)
 
-CREATE table IF NOT EXISTS cuisinesref(
-    cuisineid bigint,
-    name text,
-    CONSTRAINT cuisine_key PRIMARY KEY (cuisineid)
 );
-
 CREATE table IF NOT EXISTS cuisines(
     restaurantid bigint,
     cuisineid bigint,
@@ -51,17 +63,6 @@ CREATE table IF NOT EXISTS liked(
     CONSTRAINT liked_restaurant_key FOREIGN KEY (restaurantid) REFERENCES restaurants(restaurantid)
 );
 
-CREATE table IF NOT EXISTS listedref(
-    listedid bigint,
-    name text,
-    CONSTRAINT listed_key PRIMARY KEY (listedid)
-);
-
-CREATE table IF NOT EXISTS locationref(
-    locationid bigint,
-    name text,
-    CONSTRAINT locationid PRIMARY KEY (locationid)
-);
 
 CREATE table IF NOT EXISTS phones(
     restaurantid bigint,
@@ -88,23 +89,29 @@ CREATE table IF NOT EXISTS reviews(
     userid bigint,
     rating float,
     review text,
-    CONSTRAINT review_key PRIMARY KEY (reviewid)
+    CONSTRAINT review_key PRIMARY KEY (reviewid),
+    CONSTRAINT rest_foreign_key FOREIGN KEY (restaurantid) REFERENCES restaurants(restaurantid)
 );
 
 
+\copy cuisinesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
+
+\copy listedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
+
+\copy locationref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
+
 \copy restaurants from '/Users/ishaansingh/Desktop/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy cuisinesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
+Update restaurants set locationid = NULL where locationid = -1;
+
+alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locationid) REFERENCES locationref(locationid);
+
 
 \copy cuisines from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
 
 \copy likedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
 
 \copy liked from '/Users/ishaansingh/Desktop/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
-
-\copy listedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
-
-\copy locationref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
 
 \copy phones from '/Users/ishaansingh/Desktop/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
 
