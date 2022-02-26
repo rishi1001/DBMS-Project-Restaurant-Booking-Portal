@@ -5,6 +5,7 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
+
 def get_db_connection():
     conn = psycopg2.connect(
     host = "localhost",
@@ -30,3 +31,7 @@ def index():
     # cur.close()
     # conn.close()
     return render_template('index.html',x=5)
+
+if __name__=='__main__':
+    app.key='ok'
+    app.run(debug=True)
