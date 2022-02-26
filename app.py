@@ -10,9 +10,9 @@ app.secret_key = 'col362project'
 def get_db_connection():
     conn = psycopg2.connect(
     host = "localhost",
-    database = "dbname",
-    user = "read_only_user",
-    password = "password"
+    database = "col362project",
+    user = "postgres",
+    password = "your_password"
     )
     return conn
 
@@ -24,16 +24,7 @@ def index():
         session['userid'] = -1
     if session.get('userid') > 0:
         return redirect(url_for('profile'))
-    # conn = get_db_connection()
-    # cur = conn.cursor()
-    # cur.execute("SELECT * FROM users limit 10;")
-    # users = cur.fetchall()
 
-    # for user in users:
-    #     print(user)
-
-    # cur.close()
-    # conn.close()
     return redirect(url_for('home'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -44,8 +35,7 @@ def login():
         session['userid'] = -1
         username=request.form['username']
         password=request.form['password']
-        actual = 'ok'
-        hash_ = bcrypt.hashpw(actual.encode('utf-8'), bcrypt.gensalt()) # To generate hash
+        hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) # To generate hash
         if bcrypt.checkpw(password.encode('utf-8'), hash_): # To compare hash with unhashed if same
             print(hash_)
         print(username, password)
@@ -58,8 +48,6 @@ def login():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    if 'userid' not in session:
-        session['userid'] = -1
     session['userid'] = -1
     return redirect(url_for('home'))
 
@@ -79,13 +67,36 @@ def profile():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+
     if 'userid' not in session:
         session['userid'] = -1
     if request.method == 'POST':
         session['userid'] = -1
         username=request.form['username2']
         password=request.form['password2']
-        print(username, password)
+        hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        # Now, establish a connection to the database and put the username and password in login_info
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT userid FROM login_info ORDER BY userid DESC limit 1;")
+        last_id = cur.fetchall()
+        if (len(last_id) == 0): # This is the first user
+            tuple1 = (username,hash_)
+            query1 = """INSERT INTO login_info VALUES (1,%s,%s)"""
+            cur.execute(query1,tuple1)
+            conn.commit()
+
+        else:
+            tuple1 = (str(int(last_id[0][0])+1),username,hash_)
+            query1 = """INSERT INTO login_info VALUES (%s,%s,%s)"""
+            cur.execute(query1,tuple1)
+            conn.commit()
+
+        # Check if insertion has actually happened in the database
+
+        cur.close()
+        conn.close()
+
         if 1 == 1: # authenticate user and register
             session['userid'] = 1
             return redirect(url_for('profile'))
