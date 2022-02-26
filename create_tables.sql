@@ -9,7 +9,8 @@ drop table phones cascade;
 drop table typesref cascade;
 drop table types cascade;
 drop table reviews cascade;
-
+drop database COL362project;
+create database COL362project;
 CREATE table IF NOT EXISTS restaurants(
     restaurantid bigint,
     locationid bigint,
