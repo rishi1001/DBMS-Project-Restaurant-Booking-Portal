@@ -1,16 +1,18 @@
-drop table restaurants cascade;
-drop table cuisinesref cascade;
-drop table cuisines cascade;
-drop table likedref cascade;
-drop table liked cascade;
-drop table listedref cascade;
-drop table locationref cascade;
-drop table phones cascade;
-drop table typesref cascade;
-drop table types cascade;
-drop table reviews cascade;
-drop database COL362project;
-create database COL362project;
+-- drop database if exists col362project;
+-- create database col362project;
+-- \c col362project
+
+drop table if exists restaurants cascade;
+drop table if exists cuisinesref cascade;
+drop table if exists cuisines cascade;
+drop table if exists likedref cascade;
+drop table if exists liked cascade;
+drop table if exists listedref cascade;
+drop table if exists locationref cascade;
+drop table if exists phones cascade;
+drop table if exists typesref cascade;
+drop table if exists types cascade;
+drop table if exists reviews cascade;
 
 CREATE table IF NOT EXISTS cuisinesref(
     cuisineid bigint,
@@ -93,30 +95,29 @@ CREATE table IF NOT EXISTS reviews(
     CONSTRAINT rest_foreign_key FOREIGN KEY (restaurantid) REFERENCES restaurants(restaurantid)
 );
 
+\copy cuisinesref from '/Users/karan/COL362/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy cuisinesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy listedref from '/Users/karan/COL362/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy listedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy locationref from '/Users/karan/COL362/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy locationref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
-
-\copy restaurants from '/Users/ishaansingh/Desktop/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
+\copy restaurants from '/Users/karan/COL362/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
 Update restaurants set locationid = NULL where locationid = -1;
 
 alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locationid) REFERENCES locationref(locationid);
 
 
-\copy cuisines from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisines from '/Users/karan/COL362/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy likedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy likedref from '/Users/karan/COL362/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy liked from '/Users/ishaansingh/Desktop/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
+\copy liked from '/Users/karan/COL362/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy phones from '/Users/ishaansingh/Desktop/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
+\copy phones from '/Users/karan/COL362/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy typesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy typesref from '/Users/karan/COL362/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy types from '/Users/ishaansingh/Desktop/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
+\copy types from '/Users/karan/COL362/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy reviews from '/Users/ishaansingh/Desktop/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
+\copy reviews from '/Users/karan/COL362/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';

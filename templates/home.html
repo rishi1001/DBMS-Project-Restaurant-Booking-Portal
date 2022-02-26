@@ -1,0 +1,8 @@
+{%if sess.userid == -1%}
+	{% extends 'base1.html' %}
+{% else %}
+	{% extends 'base2.html' %}
+{%endif%}
+{% block content %}
+Write description of website here
+{% endblock %}
