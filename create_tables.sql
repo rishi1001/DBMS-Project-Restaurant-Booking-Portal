@@ -1,3 +1,15 @@
+drop table restaurants cascade;
+drop table cuisinesref cascade;
+drop table cuisines cascade;
+drop table likedref cascade;
+drop table liked cascade;
+drop table listedref cascade;
+drop table locationref cascade;
+drop table phones cascade;
+drop table typesref cascade;
+drop table types cascade;
+drop table reviews cascade;
+
 CREATE table IF NOT EXISTS restaurants(
     restaurantid bigint,
     locationid bigint,
@@ -79,24 +91,24 @@ CREATE table IF NOT EXISTS reviews(
 );
 
 
-copy restaurants from '/Users/rishi_1001/Documents/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
+\copy restaurants from '/Users/ishaansingh/Desktop/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
-copy cuisinesref from '/Users/rishi_1001/Documents/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisinesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
 
-copy cuisines from '/Users/rishi_1001/Documents/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisines from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
 
-copy likedref from '/Users/rishi_1001/Documents/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy likedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
 
-copy liked from '/Users/rishi_1001/Documents/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
+\copy liked from '/Users/ishaansingh/Desktop/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
 
-copy listedref from '/Users/rishi_1001/Documents/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy listedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
 
-copy locationref from '/Users/rishi_1001/Documents/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
+\copy locationref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
 
-copy phones from '/Users/rishi_1001/Documents/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
+\copy phones from '/Users/ishaansingh/Desktop/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
 
-copy typesref from '/Users/rishi_1001/Documents/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy typesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
 
-copy types from '/Users/rishi_1001/Documents/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
+\copy types from '/Users/ishaansingh/Desktop/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
 
-copy reviews from '/Users/rishi_1001/Documents/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
+\copy reviews from '/Users/ishaansingh/Desktop/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
