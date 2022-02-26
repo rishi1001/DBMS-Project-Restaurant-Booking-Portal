@@ -63,7 +63,11 @@ def profile():
         session['userid'] = -1
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
-    return render_template('profile.html')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT name,url FROM restaurants limit 10;")
+    restaurants = cur.fetchall()
+    return render_template('profile.html', restaurants = restaurants)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
