@@ -145,6 +145,6 @@ alter table reviews add CONSTRAINT user_foreign_key FOREIGN KEY (userid) REFEREN
 -- to restaurant_login, add entries restaurantid, username as restaurant name 
 INSERT INTO restaurant_login(restaurantid,username) SELECT restaurantid,name FROM restaurants;
 
-UPDATE restaurant_login SET password = 'password';
+UPDATE restaurant_login SET password = '$2b$12$at.aLAFoqlwUdFYRQfSp/ueX6qRJjX2JFoAZmsrA7sGztz4RPCuBG';
 
 alter table restaurants add CONSTRAINT restaurant_foreign_key FOREIGN KEY (restaurantid) REFERENCES restaurant_login(restaurantid);
