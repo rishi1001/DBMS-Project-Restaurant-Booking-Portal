@@ -13,6 +13,7 @@ def get_db_connection():
 
 def reset_errors():
     session['error'] = 0
+    session['saved'] = 0
     session['login_user_username_err'] = 0
     session['login_user_password_err'] = 0
     session['login_rest_username_err'] = 0
@@ -21,6 +22,13 @@ def reset_errors():
     session['reg_user_password_err'] = 0
     session['reg_rest_username_err'] = 0
     session['reg_rest_password_err'] = 0
+    session['edit_phone_rest_err'] = 0
+    session['edit_phone_rest_saved'] =0
+    session['edit_URL_rest_saved'] =0
+    session['edit_cost_rest_err']=0
+    session['edit_cost_rest_saved']=0
+    session['edit_password_rest_err']=0
+    session['edit_password_rest_saved']=0
 
 @app.before_request
 def before_request():
@@ -177,11 +185,170 @@ def booking():
         return redirect(url_for('home'))
     return render_template('booking.html', sess=session)
 
+@app.route('/edit_profile_rest',methods =['GET','POST'])
+def edit_profile_rest():
+    if session.get('restid') <= 0:
+        return redirect(url_for('home'))
+    if request.method == 'POST':
+        print(request.form['type__'])
+        if request.form['type__'] == '5':
+            session['saved']=0
+            return redirect(url_for('restprofile'))
+        elif request.form['type__'] == '1':
+            session['edit_phone_rest_saved'] =0
+            # Currently not handling error case here
+            # Save the phone number for this restid
+            q1 = """UPDATE phones  SET phone = %s WHERE restaurantid = %s"""
+            t1 = (request.form['phonenum1'],session['restid'])
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            session['saved'] = 1
+            session['edit_phone_rest_saved'] =1
+
+        elif request.form['type__'] == '2':
+            session['edit_URL_rest_saved'] =0
+            q1 = """UPDATE restaurants SET url = %s WHERE restaurantid =%s"""
+            t1 = (request.form['url1'],session['restid'])
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            session['saved'] = 1
+            session['edit_URL_rest_saved'] =1
+
+        elif request.form['type__'] == '3':
+            session['edit_cost_rest_saved'] =0
+            q1 = """UPDATE restaurants SET costfortwo = %s WHERE restaurantid =%s"""
+            t1 = (request.form['cost1'],session['restid'])
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            session['saved'] = 1
+            session['edit_cost_rest_saved'] =1
+
+        else:
+            session['edit_password_rest_err']=0
+            session['edit_password_rest_saved']=0
+            password = request.form['pass1']
+            if len(password) == 0 or ' ' in password or not password.isalnum():
+                session['error'] = 1
+                session['edit_password_rest_err'] = 1
+            else:
+                q1 = """UPDATE restaurant_login SET password = %s WHERE restaurantid=%s"""
+                hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                hash_ = hash_.decode('utf8')
+                t1 = (hash_,session['restid'])
+                conn = get_db_connection()
+                cur = conn.cursor()
+                cur.execute(q1,t1)
+                conn.commit()
+                session['saved']=1
+                session['edit_password_rest_saved']=1
+
+    return render_template('edit_profile_rest.html',sess = session)
+
 @app.route('/restprofile', methods=['GET', 'POST'])
 def restprofile():
     if session.get('restid') <= 0:
         return redirect(url_for('home'))
-    return render_template('restprofile.html')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    q1 = """SELECT * FROM restaurants WHERE restaurantid = %s limit 1"""
+    t1 = (session['restid'],)
+    cur.execute(q1,t1)
+    info = cur.fetchall()[0]
+    context = {}
+    context['name'] = info[7]
+    context['url'] = info[8]
+    context['address'] = info[9]
+    context['rating'] = info[4]
+    context['onlineorder'] = info[3]
+    if context['rating'] is None:
+        context['rating'] = 'Not yet rated'
+    else:
+        context['rating'] = str(context['rating'])+'/5'
+    context['votes'] = int(info[5])
+    context['costfortwo'] = info[6]
+    if context['costfortwo'] is None:
+        context['costfortwo'] = 'Unknown'
+    else:
+        context['costfortwo'] = 'Rs. '+str(context['costfortwo'])+' for two people (approx.)'
+    context['locationid'] = info[1]
+    if context['locationid'] is None:
+        context['location'] = 'Unknown'
+    else:
+        q2 = """SELECT * FROM locationref WHERE locationid = %s"""
+        t2 = (context['locationid'],)
+        cur.execute(q2,t2)
+        context['location'] = cur.fetchall()[0][1]
+    context['listedid'] = info[2]
+    q2 = """SELECT * FROM listedref WHERE listedid = %s"""
+    t2 = (context['listedid'],)
+    cur.execute(q2,t2)
+    context['listed'] = cur.fetchall()[0][1]
+    q2 = """SELECT name FROM (SELECT * FROM types WHERE restaurantid = %s) as temp, typesref where temp.typeid=typesref.typeid"""
+    t2 = (session['restid'],)
+    cur.execute(q2,t2)
+    context['types'] = ''
+    for x in cur.fetchall():
+        context['types'] += x[0]+', '
+    if len(context['types']) > 0:
+        context['types'] = context['types'][:-2]
+    else:
+        context['types'] = 'Unknown'
+    q2 = """SELECT name FROM (SELECT * FROM cuisines WHERE restaurantid = %s) as temp, cuisinesref where temp.cuisineid=cuisinesref.cuisineid"""
+    t2 = (session['restid'],)
+    cur.execute(q2,t2)
+    context['cuisines'] = ''
+    for x in cur.fetchall():
+        context['cuisines'] += x[0]+', '
+    if len(context['cuisines']) > 0:
+        context['cuisines'] = context['cuisines'][:-2]
+    else:
+        context['cuisines'] = 'Unknown'
+    q2 = """SELECT name FROM (SELECT * FROM liked WHERE restaurantid = %s) as temp, likedref where temp.likedid=likedref.likedid"""
+    t2 = (session['restid'],)
+    cur.execute(q2,t2)
+    context['liked'] = ''
+    for x in cur.fetchall():
+        context['liked'] += x[0]+', '
+    if len(context['liked']) > 0:
+        context['liked'] = context['liked'][:-2]
+    else:
+        context['liked'] = 'Unknown'
+    q2 = """SELECT phone FROM phones WHERE restaurantid = %s"""
+    t2 = (session['restid'],)
+    cur.execute(q2,t2)
+    context['phones'] = ''
+    for x in cur.fetchall():
+        context['phones'] += x[0]+', '
+    if len(context['phones']) > 0:
+        context['phones'] = context['phones'][:-2]
+    else:
+        context['phones'] = 'Unknown'
+    q2 = """SELECT userid, rating, review FROM reviews WHERE restaurantid = %s order by rating desc"""
+    t2 = (session['restid'],)
+    cur.execute(q2,t2)
+    context['reviews'] = [[x[0], x[1], x[2]] for x in cur.fetchall()]
+    for i in range(len(context['reviews'])):
+        if context['reviews'][i][1] is not None:
+            context['reviews'][i][1] = str(context['reviews'][i][1])+'/5'
+        else:
+            context['reviews'][i][1] = 'N.A.'
+        user = context['reviews'][i][0]
+        if user is None:
+            user = 'Anonymous'
+        else:
+            user = int(user)
+            q2 = """SELECT username FROM user_login WHERE userid = %s limit 1"""
+            t2 = (user,)
+            cur.execute(q2,t2)
+            user = cur.fetchall()[0][0]
+        context['reviews'][i][0] = user
+    return render_template('restprofile.html', context=context)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -308,7 +475,6 @@ def register():
         q1 = """SELECT listedid FROM listedref WHERE name = %s"""
         t1 = (category,)
         cur.execute(q1,t1)
-        print(category)
         listedid = (cur.fetchall())[0][0]
         # obtain restaurantid
         q1 ="""INSERT INTO restaurants VALUES(%s,%s,%s,%s,0,0,%s,%s,%s,%s)"""
@@ -332,13 +498,9 @@ def register():
 
         # Need to check if results have actually been commited
         cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
-        print(cur.fetchall())
         cur.execute("""SELECT * from types ORDER BY restaurantid DESC limit 1""")
-        print(cur.fetchall())
         cur.execute("""SELECT * from phones ORDER BY restaurantid DESC limit 1""")
-        print(cur.fetchall())
         cur.execute("""SELECT * from locationref ORDER BY locationid DESC limit 1""")
-        print(cur.fetchall())
         return redirect(url_for('restprofile'))
     # Implement drop down list
     conn = get_db_connection()

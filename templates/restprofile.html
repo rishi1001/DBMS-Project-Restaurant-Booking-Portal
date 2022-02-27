@@ -1,4 +1,66 @@
-{% extends 'base2.html' %}
+{% extends 'base3.html' %}
 {% block content %}
-Here are your bookings
+<div class="container">
+	<div class ="row">
+		<div class="col-lg-4 mx-auto text-center form p-4">
+			<div class="px-2">
+				<form class="justify-content-center" method="GET" action="{{ url_for('edit_profile_rest')}}">
+					<input type="hidden" name="type_" value= "0" id= "type_" />
+					<div class="text-center"><h2 style="color:blue;">Profile</h2></div>
+					<button type="submit" class="btn btn-primary btn-md">Edit Profile</button>
+					<br><br>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<nav>
+  <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
+	<button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Information</button>
+	<button class="nav-link" id="nav-bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab" aria-controls="nav-bookings" aria-selected="false">Current Bookings</button>
+	<button class="nav-link" id="nav-reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="nav-reviews" aria-selected="false">Reviews</button>
+	<button class="nav-link" id="nav-history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="nav-history" aria-selected="false">History</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+	<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="nav-info-tab">
+		<br><div class="text-center"><h3 style="color:blue;"><a href={{context.url}} class="card-link">{{context.name}}</a></h3></div>
+		<div class="text-center">Cuisines: {{context.cuisines}}</div>
+		<div class="text-center">Location: {{context.location}}</div>
+		<div class="text-center"><h5 style="color:green;">Rated {{context.rating}} by {{context.votes}} people</h5></div>
+		<h4>Listed as</h4>
+		{{context.listed}}<br><br>
+		<h4>Type of Place</h4>
+		{{context.types}}<br><br>
+		<h4>Dishes liked by people</h4>
+		{{context.liked}}<br><br>
+		<h4>Average Cost</h4>
+		{{context.costfortwo}}<br><br>
+		<h4>Online Order</h4>
+		{{context.onlineorder}}<br><br>
+		<h4>Call</h4>
+		{{context.phones}}<br><br>
+		<h4>Address</h4>
+		{{context.address}}<br><br>
+	</div>
+	<div class="tab-pane fade" id="bookings" role="tabpanel" aria-labelledby="nav-bookings-tab">
+		bookings
+	</div>
+	<div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="nav-reviews-tab">
+		{%for review in context.reviews%}
+		<div class="card">
+			<div class="card-body">
+				<div class="text-center">
+					User: {{review.0}}
+					<h6 style="color:green;">Rated {{review.1}}</h6>
+					{{review.2}}
+				</div>
+			</div>
+		</div>
+		{%endfor%}
+	</div>
+	<div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="nav-history-tab">
+		history
+	</div>
+</div>
 {% endblock %}
