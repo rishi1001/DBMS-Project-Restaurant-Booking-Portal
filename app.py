@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "")
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "himthebiscuit")
     return conn
 
 def reset_errors():
@@ -193,7 +193,7 @@ def register():
             cur.execute(query1,tuple1)
             conn.commit()
         return redirect(url_for('profile'))
-    elif request.method == 'POST' and request.form['type_'] == '0':
+    elif request.method == 'POST' and request.form['type_'] == '1':
         reset_errors()
         session['userid'] = -1
         session['restid'] = -1
