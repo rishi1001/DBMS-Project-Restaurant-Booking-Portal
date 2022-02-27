@@ -13,7 +13,9 @@ drop table if exists phones cascade;
 drop table if exists typesref cascade;
 drop table if exists types cascade;
 drop table if exists reviews cascade;
-drop table if exists login_info cascade;
+drop table if exists user_login cascade;
+drop table if exists restaurant_login cascade;
+
 CREATE table IF NOT EXISTS cuisinesref(
     cuisineid bigint,
     name text,
@@ -95,40 +97,54 @@ CREATE table IF NOT EXISTS reviews(
     CONSTRAINT rest_foreign_key FOREIGN KEY (restaurantid) REFERENCES restaurants(restaurantid)
 );
 
-CREATE table if NOT EXISTS login_info(
+CREATE table if NOT EXISTS user_login(
     userid bigint,
     username text,
     password text,
-    CONSTRAINT login_key PRIMARY KEY (userid)
+    CONSTRAINT user_login_key PRIMARY KEY (userid)
 );
 
-\copy cuisinesref from '/Users/rishi_1001/Documents/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
+CREATE table if not EXISTS restaurant_login(
+    restaurantid bigint,
+    username text,
+    password text,
+    CONSTRAINT restaurant_login_key PRIMARY KEY (restaurantid)
+);
 
-\copy listedref from '/Users/rishi_1001/Documents/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisinesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy locationref from '/Users/rishi_1001/Documents/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
+\copy listedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy restaurants from '/Users/rishi_1001/Documents/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
+\copy locationref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
+
+\copy restaurants from '/Users/ishaansingh/Desktop/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
 Update restaurants set locationid = NULL where locationid = -1;
 
 alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locationid) REFERENCES locationref(locationid);
 
 
-\copy cuisines from '/Users/rishi_1001/Documents/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisines from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy likedref from '/Users/rishi_1001/Documents/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy likedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy liked from '/Users/rishi_1001/Documents/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
+\copy liked from '/Users/ishaansingh/Desktop/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy phones from '/Users/rishi_1001/Documents/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
+\copy phones from '/Users/ishaansingh/Desktop/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy typesref from '/Users/rishi_1001/Documents/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy typesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy types from '/Users/rishi_1001/Documents/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
+\copy types from '/Users/ishaansingh/Desktop/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy reviews from '/Users/rishi_1001/Documents/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
+\copy reviews from '/Users/ishaansingh/Desktop/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
 
 Update reviews set userid = NULL where userid = -1;
 
-alter table reviews add CONSTRAINT user_foreign_key FOREIGN KEY (userid) REFERENCES login_info(userid);
+alter table reviews add CONSTRAINT user_foreign_key FOREIGN KEY (userid) REFERENCES user_login(userid);
+
+-- to restaurant_login, add entries restaurantid, username as restaurant name 
+INSERT INTO restaurant_login(restaurantid,username) SELECT restaurantid,name FROM restaurants;
+
+UPDATE restaurant_login SET password = 'password';
+
+alter table restaurants add CONSTRAINT restaurant_foreign_key FOREIGN KEY (restaurantid) REFERENCES restaurant_login(restaurantid);

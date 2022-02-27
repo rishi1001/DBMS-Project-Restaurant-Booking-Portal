@@ -41,17 +41,32 @@ def login():
     if request.method == 'POST':
         reset_errors()
         session['userid'] = -1
-        username=request.form['username1']
-        password=request.form['password1']
-        hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) # To generate hash
-        if bcrypt.checkpw(password.encode('utf-8'), hash_): # To compare hash with unhashed if same
-            print(hash_)
-        print(username, password)
-        if 1 == 1: # authenticate user
-            session['userid'] = 1
-            return redirect(url_for('profile'))
+        username=request.form['username']
+        password=request.form['password']
+
+        # Check if username is already present in the table
+        conn = get_db_connection()
+        cur = conn.cursor()
+        q1 = """SELECT * FROM user_login WHERE username = %s"""
+        t1 = (username,)
+        cur.execute(q1,t1)
+        credentials = cur.fetchall()
+
+        if (len(credentials) == 0):
+            # User does not exist, currently redirecting to registration
+            return redirect(url_for('register'))
+
         else:
-            return redirect(url_for('login'))
+            # Check if passwords match
+            hash_ = credentials[0][2].encode('utf-8')
+            if bcrypt.checkpw(password.encode('utf-8'),hash_):
+                # passwords match, login and authenticate the user
+                session['userid'] = int(credentials[0][0])
+                return redirect(url_for('profile'))
+
+            else:
+                return redirect(url_for('login'))
+
     return render_template('login.html', sess=session)
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -81,20 +96,22 @@ def register():
         username=request.form['username3']
         password=request.form['password3']
         hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        hash_ = hash_.decode('utf8')
         # Now, establish a connection to the database and put the username and password in login_info
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT userid FROM login_info ORDER BY userid DESC limit 1;")
+        cur.execute("SELECT userid FROM user_login ORDER BY userid DESC limit 1;")
         last_id = cur.fetchall()
+
         if (len(last_id) == 0): # This is the first user
             tuple1 = (username,hash_)
-            query1 = """INSERT INTO login_info VALUES (1,%s,%s)"""
+            query1 = """INSERT INTO user_login VALUES (1,%s,%s)"""
             cur.execute(query1,tuple1)
             conn.commit()
 
         else:
             tuple1 = (str(int(last_id[0][0])+1),username,hash_)
-            query1 = """INSERT INTO login_info VALUES (%s,%s,%s)"""
+            query1 = """INSERT INTO user_login VALUES (%s,%s,%s)"""
             cur.execute(query1,tuple1)
             conn.commit()
 
