@@ -199,6 +199,15 @@ def register():
         session['restid'] = -1
         username=request.form['username4']
         password=request.form['password4']
+        location = request.form['location']
+        category = request.form.get('category')
+        onlineorder = request.form['onlineorder']
+        costfortwo = request.form['costfortwo']
+        url = request.form['urll']
+        address = request.form['address']
+        phonenum = request.form['phonenum']
+        typerest = request.form.get('type')
+        print(typerest) # Why getting only the first word ?? # FIX BUG
         if len(username) == 0 or len(username.replace(' ', '')) == 0 or not username.replace(' ', '').isalnum():
             session['error'] = 1
             session['reg_rest_username_err'] = 1
@@ -219,9 +228,9 @@ def register():
             session['error'] = 1
             session['reg_rest_username_err'] = 1
             return redirect(url_for('register'))
-        cur.execute("SELECT restaurantid FROM restaurant_login ORDER BY userid DESC limit 1;")
+        cur.execute("SELECT restaurantid FROM restaurant_login ORDER BY restaurantid DESC limit 1;")
         last_id = cur.fetchall()
-
+        restaurantid = 1
         if (len(last_id) == 0): # This is the first user
             tuple1 = (username,hash_)
             query1 = """INSERT INTO restaurant_login VALUES (1,%s,%s)"""
@@ -230,10 +239,72 @@ def register():
             session['restid'] = 1
 
         else:
+            restaurantid = int(last_id[0][0])+1
             session['restid'] = int(last_id[0][0])+1
             tuple1 = (str(int(last_id[0][0])+1),username,hash_)
             query1 = """INSERT INTO restaurant_login VALUES (%s,%s,%s)"""
             cur.execute(query1,tuple1)
             conn.commit()
+        # In locationref, check if location is present, and if not, add a new location to locationref.
+        # Insert rid,locationid,listedid,onlineorder,0,0,costfortwo,username,url,address to restaurants (commit)
+        # insert rid,phone in phones
+        # Insert restaurantid, typeid (select from dropdown)
+        q1 = """SELECT locationid FROM locationref WHERE name = %s"""
+        t1 = (location,)
+        cur.execute(q1,t1)
+        locid = cur.fetchall()
+        locationid = 0 # To be inserted to table 
+        if (len(locid) == 0):
+            # This is a new location
+            cur.execute("SELECT locationid FROM locationref ORDER BY locationid DESC limit 1;")
+            last_id = cur.fetchall()
+            if (len(last_id) == 0):
+                locationid = 1
+            else:
+                locationid = int(last_id[0][0])+1
+            q1 = """INSERT INTO locationref VALUES (%s,%s)"""
+            t1 = (locationid,location)
+            cur.execute(q1,t1)
+            conn.commit() # as inserted a new location
+        else:
+            # location already exists
+            locationid = int(locid[0][0])
+        # presently, not added any checks for the added new fields
+        # obtain listedid also
+        q1 = """SELECT listedid FROM listedref WHERE name = %s"""
+        t1 = (category,)
+        cur.execute(q1,t1)
+        print(category)
+        listedid = (cur.fetchall())[0][0]
+        # obtain restaurantid
+        q1 ="""INSERT INTO restaurants VALUES(%s,%s,%s,%s,0,0,%s,%s,%s,%s)"""
+        t1 = (restaurantid,locationid,listedid,onlineorder,costfortwo,username,url,address)
+        cur.execute(q1,t1)
+        conn.commit()
+        q1 = """INSERT INTO phones VALUES(%s,%s)"""
+        t1 = (restaurantid,phonenum)
+        cur.execute(q1,t1)
+        conn.commit()
+        # obtain typeid
+        q1 = """SELECT typeid FROM typesref WHERE name = %s"""
+        t1 = (typerest,)
+        cur.execute(q1,t1)
+        typeid = (cur.fetchall())[0][0]
+
+        q1 = """INSERT INTO types VALUES(%s,%s)"""
+        t1 = (restaurantid,typeid)
+        cur.execute(q1,t1)
+        conn.commit()
+
+        # Need to check if results have actually been commited
+        cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
+        print(cur.fetchall())
         return redirect(url_for('restprofile'))
-    return render_template('register.html', sess=session)
+    # Implement drop down list
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""SELECT name FROM listedref""")
+    categorylist = cur.fetchall()
+    cur.execute("""SELECT name from typesref""")
+    typelist = cur.fetchall()
+    return render_template('register.html', sess=session, categorylist= categorylist, typelist = typelist)

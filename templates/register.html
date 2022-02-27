@@ -23,6 +23,10 @@
 						<h6 style="color:red;">Invalid Password</h6>
 					{%endif%}
 					<br>
+					<div class="form-group">
+						<label for="exampleInputPassword1">Password (Only Alphanumeric)</label>
+						<input type="password" class="form-control" id="password3" name="password3" placeholder="Password">
+					</div>
 					<input type="hidden" name="type_" value= "0" id= "type_" />
 					<button type="submit" class="btn btn-success btn-lg">Submit</button>
 					<br>
@@ -48,6 +52,57 @@
 					{%if sess.error == 1 and sess.reg_rest_password_err == 1%}
 						<h6 style="color:red;">Invalid Password</h6>
 					{%endif%}
+					<br>
+					<div class="form-group">
+						<label for="exampleInputlocation">Location (Only Alphanumeric)</label>
+						<input type="location" class="form-control" id="location" name="location" placeholder="Location">
+					</div>
+					<br>
+					<div class="form-group">
+						<label for="exampleCategory">Category</label>
+						<select name="category" id = "category">
+						{% for j in categorylist %}
+						<option value = {{j[0]}}> {{j[0]}} </option>
+						{% endfor %}
+						</select>
+					</div>
+					<br>
+					<div class="form-group">
+						<label for="exampletype">Type</label>
+						<select name="type" id = "type">
+						{% for j in typelist %}
+						<option value = {{j[0]}}> {{j[0]}} </option>
+						{% endfor %}
+						</select>
+					</div>
+					<br>
+					<div class="form-group">
+						<label for="exampleonlineorder">Online Order Supported ?</label>
+						<select name="onlineorder" id = "onlineorder">
+						<option value = "Yes"> Yes </option>
+						<option value = "No"> No </option>
+						</select>
+					</div>
+					<br>
+					<div class="form-group">
+						<label for="costfortwo">Cost For Two (in Rupees)</label>
+						<input type="costfortwo" class="form-control" id="costfortwo" name="costfortwo" placeholder="Cost for Two">
+					</div>
+					<br>
+					<div class="form-group">
+						<label for="urll">Website URL</label>
+						<input type="urll" class="form-control" id="urll" name="urll" placeholder="URL">
+					</div>
+					<br>
+					<div class="form-group">
+						<label for="address">Address</label>
+						<input type="address" class="form-control" id="address" name="address" placeholder="Address">
+					</div>
+					<br>
+					<div class="form-group">
+						<label for="phonenum">Phone Number</label>
+						<input type="phonenum" class="form-control" id="phonenum" name="phonenum" placeholder="Phone Number">
+					</div>
 					<br>
 					<input type="hidden" name="type_" value= "1" id= "type_" />
 					<button type="submit" class="btn btn-success btn-lg">Submit</button>
