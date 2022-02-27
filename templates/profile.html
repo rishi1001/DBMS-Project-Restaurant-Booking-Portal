@@ -1,5 +1,37 @@
 {% extends 'base2.html' %}
 {% block content %}
+<br><br>
+<div class="container">
+    <form class="justify-content-center" method="POST">
+        <div class="form-group">
+            <label for="exampleCost">Cost for Two</label>
+            <select name="cost" id = "cost" placeholder = "Select Cost">
+            <option value = 0> Less Than 1000 </option>
+            <option value = 1> 1000-5000 </option>
+            <option value = 2> Greater Than 5000 </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleRatingr">Rating</label>
+            <select name="rating" id = "rating" placeholder = "Select Rating">
+            <option value = 4> 4-5 </option>
+            <option value = 3> 3-4 </option>
+            <option value = 2> 2-3 </option>
+            <option value = 1> 1-2 </option>
+            <option value = 0> 0-1 </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleCuisine">Cuisine</label>
+            <select name="cuisine" id = "cuisine" placeholder = "Select Cuisine">
+                {% for j in cuisines %}
+                <option value = '{{j[0]}}'> {{j[0]}} </option>
+                {% endfor %}
+            </select>
+        </div>
+    <button type="submit" class="btn btn-success btn-small">Submit</button>
+    </form>
+</div>
 Here are your faviourite Restaurants:
 {% for restaurant in restaurants %}
 <div class="card" style="width: 18rem;">

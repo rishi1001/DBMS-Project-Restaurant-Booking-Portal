@@ -135,12 +135,37 @@ def home():
 def profile():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
-    # conn = get_db_connection()
-    # cur = conn.cursor()
-    # cur.execute("SELECT name,url FROM restaurants limit 10;")
-    # restaurants = cur.fetchall()
-    # return render_template('profile.html', restaurants = restaurants)
-    return render_template('profile.html')
+    if request.method=="POST":
+        # how to know if user has actually selected it ?
+        cost = int(request.form['cost'])
+        if cost==0:
+            costlow = 0
+            costhigh = 5000
+        elif cost==1:
+            costlow = 5000
+            costhigh = 10000
+        else:
+            costlow = 10000
+            costhigh = 999999999
+        rating = int(request.form['rating'])
+        cuisine = request.form['cuisine']
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT cuisineid FROM cuisinesref WHERE name = %s",(cuisine,))
+        cuisineid = cur.fetchall()[0][0]
+        print(type(cost),rating,cuisineid,cuisine)
+        q1 = "SELECT name,url FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s  limit 10;"
+        cur.execute(q1,(costhigh,costlow,rating+1,rating,cuisineid)) 
+        restaurants = cur.fetchall()
+        return render_template('profile.html', restaurants = restaurants)
+    # return render_template('profile.html')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT name,url FROM restaurants limit 10;")
+    restaurants = cur.fetchall()
+    cur.execute("SELECT name FROM cuisinesref")
+    cuisines = cur.fetchall()
+    return render_template('profile.html', restaurants = restaurants, cuisines = cuisines)
 
 @app.route('/restprofile', methods=['GET', 'POST'])
 def restprofile():
