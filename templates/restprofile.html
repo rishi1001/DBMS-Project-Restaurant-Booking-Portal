@@ -51,4 +51,17 @@
 		history
 	</div>
 </div>
+<div class="container">
+	<div class ="row">
+		<div class="col-lg-4 mx-auto text-center form p-4">
+			<div class="px-2">
+				<form class="justify-content-center" method="GET" action="{{ url_for('edit_profile_rest')}}">
+					<input type="hidden" name="type_" value= "0" id= "type_" />
+					<button type="submit" class="btn btn-primary btn-md">Edit Profile</button>
+					<br><br>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base2.html' %}
+{% block content %}
+<br><br>
+<div class="container">
+	<div class ="row">
+		<div class="col-lg-4 mx-auto text-center form p-4">
+			<div class="px-2">
+				<div class="text-center"><h3>Edit Profile</h3></div><br>
+				<form class="justify-content-center" method="POST">
+					<div class="form-group">
+						<label for="edit_phone_num">Phone Number</label>
+						<input type="phonenum1" class="form-control" id="phonenum1" name="phonenum1" placeholder="Enter New Number">
+					</div>
+					<br>
+					<input type="hidden" name="type__" value= "1" id= "type__" />
+					<button type="submit" class="btn btn-success btn-lg">Save Number</button>
+					<br>
+					{%if sess.error == 1 and sess.edit_phone_rest_err == 1%}
+						<h6 style="color:red;">Invalid Phone Number</h6>
+					{%endif%}
+					{%if sess.saved == 1 and sess.edit_phone_rest_saved == 1%}
+						<h6 style="color:green;">New Phone Number Saved !</h6>
+					{%endif%}
+				</form>
+				<form class="justify-content-center" method="POST">
+					<div class="form-group">
+						<label for="edit_URL">URL</label>
+						<input type="url1" class="form-control" id="url1" name="url1" placeholder="Enter New URL">
+					</div>
+					<br>
+					<input type="hidden" name="type__" value= "2" id= "type__" />
+					<button type="submit" class="btn btn-success btn-lg">Save URL</button>
+					<br>
+					{%if sess.saved == 1 and sess.edit_URL_rest_saved == 1%}
+						<h6 style="color:green;">New URL Saved !</h6>
+					{%endif%}
+				</form>
+				<form class="justify-content-center" method="POST">
+					<div class="form-group">
+						<label for="edit_cost">Cost For Two</label>
+						<input type="cost1" class="form-control" id="cost1" name="cost1" placeholder="Enter New Cost">
+					</div>
+					<br>
+					<input type="hidden" name="type__" value= "3" id= "type__" />
+					<button type="submit" class="btn btn-success btn-lg">Save Cost</button>
+					<br>
+					{%if sess.error == 1 and sess.edit_cost_rest_err == 1%}
+						<h6 style="color:red;">Invalid Cost</h6>
+					{%endif%}
+					{%if sess.saved == 1 and sess.edit_cost_rest_saved == 1%}
+						<h6 style="color:green;">New Cost Saved !</h6>
+					{%endif%}
+				</form>
+				<form class="justify-content-center" method="POST">
+					<div class="form-group">
+						<label for="edit_pass">New Password</label>
+						<input type="password" class="form-control" id="pass1" name="pass1" placeholder="Enter New Password">
+					</div>
+					<br>
+					<input type="hidden" name="type__" value= "4" id= "type__" />
+					<button type="submit" class="btn btn-success btn-lg">Save Password</button>
+					<br>
+					{%if sess.error == 1 and sess.edit_password_rest_err == 1%}
+						<h6 style="color:red;">Invalid Password</h6>
+					{%endif%}
+					{%if sess.saved == 1 and sess.edit_password_rest_saved == 1%}
+						<h6 style="color:green;">New Password Saved !</h6>
+					{%endif%}
+					<br>
+				</form>
+				<form class="justify-content-center" method="POST">
+					<input type="hidden" name="type__" value= "5" id= "type__" />
+					<button type="submit" class="btn btn-success btn-lg">Back to Home</button>
+					<br>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+can change costfortwo, url, phone, password
+display old details initially
