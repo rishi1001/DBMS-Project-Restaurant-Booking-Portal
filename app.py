@@ -13,6 +13,7 @@ def get_db_connection():
 
 def reset_errors():
     session['error'] = 0
+    session['saved'] = 0
     session['login_user_username_err'] = 0
     session['login_user_password_err'] = 0
     session['login_rest_username_err'] = 0
@@ -21,6 +22,13 @@ def reset_errors():
     session['reg_user_password_err'] = 0
     session['reg_rest_username_err'] = 0
     session['reg_rest_password_err'] = 0
+    session['edit_phone_rest_err'] = 0
+    session['edit_phone_rest_saved'] =0
+    session['edit_URL_rest_saved'] =0
+    session['edit_cost_rest_err']=0
+    session['edit_cost_rest_saved']=0
+    session['edit_password_rest_err']=0
+    session['edit_password_rest_saved']=0
 
 @app.before_request
 def before_request():
@@ -142,10 +150,77 @@ def profile():
     # return render_template('profile.html', restaurants = restaurants)
     return render_template('profile.html')
 
+@app.route('/edit_profile_rest',methods =['GET','POST'])
+def edit_profile_rest():
+    if session.get('restid') <= 0:
+        return redirect(url_for('home'))
+    if request.method == 'POST':
+        print(request.form['type__'])
+        if request.form['type__'] == '5':
+            session['saved']=0
+            return redirect(url_for('restprofile'))
+        elif request.form['type__'] == '1':
+            session['edit_phone_rest_saved'] =0
+            # Currently not handling error case here
+            # Save the phone number for this restid
+            q1 = """UPDATE phones  SET phone = %s WHERE restaurantid = %s"""
+            t1 = (request.form['phonenum1'],session['restid'])
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            session['saved'] = 1
+            session['edit_phone_rest_saved'] =1
+
+        elif request.form['type__'] == '2':
+            session['edit_URL_rest_saved'] =0
+            q1 = """UPDATE restaurants SET url = %s WHERE restaurantid =%s"""
+            t1 = (request.form['url1'],session['restid'])
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            session['saved'] = 1
+            session['edit_URL_rest_saved'] =1
+
+        elif request.form['type__'] == '3':
+            session['edit_cost_rest_saved'] =0
+            q1 = """UPDATE restaurants SET costfortwo = %s WHERE restaurantid =%s"""
+            t1 = (request.form['cost1'],session['restid'])
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            session['saved'] = 1
+            session['edit_cost_rest_saved'] =1
+
+        else:
+            session['edit_password_rest_err']=0
+            session['edit_password_rest_saved']=0
+            password = request.form['pass1']
+            if len(password) == 0 or ' ' in password or not password.isalnum():
+                session['error'] = 1
+                session['edit_password_rest_err'] = 1
+            else:
+                q1 = """UPDATE restaurant_login SET password = %s WHERE restaurantid=%s"""
+                hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                hash_ = hash_.decode('utf8')
+                t1 = (hash_,session['restid'])
+                conn = get_db_connection()
+                cur = conn.cursor()
+                cur.execute(q1,t1)
+                conn.commit()
+                session['saved']=1
+                session['edit_password_rest_saved']=1
+
+    return render_template('edit_profile_rest.html',sess = session)
+
 @app.route('/restprofile', methods=['GET', 'POST'])
 def restprofile():
     if session.get('restid') <= 0:
         return redirect(url_for('home'))
+    if request.method == 'POST':
+        return redirect(url_for('edit_profile_rest'))
     return render_template('restprofile.html')
 
 @app.route('/register', methods=['GET', 'POST'])

@@ -1,4 +1,19 @@
 {% extends 'base2.html' %}
 {% block content %}
 Here are your bookings
+<br><br>
+<div class="container">
+	<div class ="row">
+		<div class="col-lg-4 mx-auto text-center form p-4">
+			<div class="px-2">
+				<div class="text-center"><h3>Restaurant</h3></div><br>
+				<form class="justify-content-center" method="POST">
+					<input type="hidden" name="type_" value= "0" id= "type_" />
+					<button type="submit" class="btn btn-success btn-lg">Edit Profile</button>
+					<br><br>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
