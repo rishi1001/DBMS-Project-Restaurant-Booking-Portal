@@ -124,6 +124,7 @@ def login():
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session['userid'] = -1
+    session['restid'] = -1
     return redirect(url_for('home'))
 
 @app.route('/home', methods=['GET', 'POST'])

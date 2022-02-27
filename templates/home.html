@@ -1,4 +1,4 @@
-{%if sess.userid == -1%}
+{%if sess.userid == -1 and sess.restid == -1%}
 	{% extends 'base1.html' %}
 {% else %}
 	{% extends 'base2.html' %}
