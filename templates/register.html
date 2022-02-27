@@ -8,7 +8,7 @@
 				<div class="text-center"><h3>User Register</h3></div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
-						<label for="InputUsername">Username</label>
+						<label for="InputUsername">Username (Only Alphanumeric with spaces)</label>
 						<input type="username" class="form-control" id="username3" name="username3" aria-describedby="usernamelHelp" placeholder="Enter username">
 					</div>
 					{%if sess.error == 1 and sess.reg_user_username_err == 1%}
@@ -16,7 +16,7 @@
 					{%endif%}
 					<br>
 					<div class="form-group">
-						<label for="exampleInputPassword1">Password</label>
+						<label for="exampleInputPassword1">Password (Only Alphanumeric)</label>
 						<input type="password" class="form-control" id="password3" name="password3" placeholder="Password">
 					</div>
 					{%if sess.error == 1 and sess.reg_user_password_err == 1%}
@@ -34,7 +34,7 @@
 				<div class="text-center"><h3>Restaurant Register</h3></div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
-						<label for="InputUsername">Username</label>
+						<label for="InputUsername">Username (Only Alphanumeric with spaces)</label>
 						<input type="username" class="form-control" id="username4" name="username4" aria-describedby="usernamelHelp" placeholder="Enter username">
 					</div>
 					{%if sess.error == 1 and sess.reg_rest_username_err == 1%}
@@ -42,7 +42,7 @@
 					{%endif%}
 					<br>
 					<div class="form-group">
-						<label for="exampleInputPassword1">Password</label>
+						<label for="exampleInputPassword1">Password (Only Alphanumeric)</label>
 						<input type="password" class="form-control" id="password4" name="password4" placeholder="Password">
 					</div>
 					{%if sess.error == 1 and sess.reg_rest_password_err == 1%}
