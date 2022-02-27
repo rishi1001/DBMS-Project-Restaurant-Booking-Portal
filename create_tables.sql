@@ -15,6 +15,7 @@ drop table if exists types cascade;
 drop table if exists reviews cascade;
 drop table if exists user_login cascade;
 drop table if exists restaurant_login cascade;
+drop table if exists bookings cascade;
 
 CREATE table IF NOT EXISTS cuisinesref(
     cuisineid bigint,
@@ -109,6 +110,18 @@ CREATE table if not EXISTS restaurant_login(
     username text,
     password text,
     CONSTRAINT restaurant_login_key PRIMARY KEY (restaurantid)
+);
+
+CREATE table if NOT EXISTS bookings(
+    bookingid bigint,
+    userid bigint,
+    restaurantid bigint,
+    person bigint,
+    date date,
+    time time,
+    CONSTRAINT bookings_key PRIMARY KEY (bookingid),
+    CONSTRAINT booking_foreign_key1 FOREIGN KEY (userid) REFERENCES user_login(userid),
+    CONSTRAINT booking_foreign_key2 FOREIGN KEY (restaurantid) REFERENCES restaurants(restaurantid)
 );
 
 \copy cuisinesref from '/Users/rishi_1001/Documents/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';

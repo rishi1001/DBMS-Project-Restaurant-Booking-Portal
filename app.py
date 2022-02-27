@@ -29,6 +29,9 @@ def reset_errors():
     session['edit_cost_rest_saved']=0
     session['edit_password_rest_err']=0
     session['edit_password_rest_saved']=0
+    session['cuisine_selected']=-1
+    session['rating_selected']=-1
+    session['cost_selected']=-1
 
 @app.before_request
 def before_request():
@@ -41,7 +44,7 @@ def before_request():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if session.get('userid') > 0 or session.get('restid') > 0:
-        return redirect(url_for('profile'))
+        return redirect(url_for('profile'))             # profile or restprofile ? 
 
     return redirect(url_for('home'))
 
@@ -161,28 +164,49 @@ def profile():
         cur = conn.cursor()
         cur.execute("SELECT cuisineid FROM cuisinesref WHERE name = %s",(cuisine,))
         cuisineid = cur.fetchall()[0][0]
-        # print(type(cost),rating,cuisineid,cuisine)
-        q1 = "SELECT name,url FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s  limit 10;"
+
+        session['cuisine_selected'] = cuisine
+        print(cuisine)
+        session['rating_selected'] = rating
+        session['cost_selected'] = cost
+        # also sort and do stuff
+        q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s  limit 10;"
         cur.execute(q1,(costhigh,costlow,rating+1,rating,cuisineid)) 
         restaurants = cur.fetchall()
-        return render_template('profile.html', restaurants = restaurants)
+        cur.execute("SELECT name FROM cuisinesref")
+        cuisines = cur.fetchall()
+        return render_template('profile.html', restaurants = restaurants, cuisines = cuisines, sess=session)
     elif request.method == 'POST' and request.form['type_'] == '1':
-        # booking button to reach here ? 
-        print("get here by pressing booking button")
+        # how to get which restaurant is selected ?
+        print(request.form.get("booking_restaurant"))       # maybe save this in session ? 
         return redirect(url_for('booking'))
     # return render_template('profile.html')
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT name,url FROM restaurants limit 10;")
+    cur.execute("SELECT name,url,restaurantid FROM restaurants limit 10;")
     restaurants = cur.fetchall()
     cur.execute("SELECT name FROM cuisinesref")
     cuisines = cur.fetchall()
-    return render_template('profile.html', restaurants = restaurants, cuisines = cuisines)
+    return render_template('profile.html', restaurants = restaurants, cuisines = cuisines, sess=session)
 
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
-    if session.get('restid') <= 0:
+    if session.get('userid') <= 0:
         return redirect(url_for('home'))
+    # print(request.form)
+    if request.method == 'POST':
+        persons = request.form['tot_person']
+        date = request.form['date']                
+        time = request.form['time']
+        # what to do after booked ? checkout or backat profile page?
+        # get restid from booked res id(on clicking book now)
+        t1 = (1,session.get('userid'),1,persons,date,time)      # how to generate booking id? (currently set as 1)
+        q1 = """INSERT INTO bookings VALUES (%s,%s,%s,%s,%s,%s)"""
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(q1,t1)
+        conn.commit()
+        print(persons,date,time)
     return render_template('booking.html', sess=session)
 
 @app.route('/edit_profile_rest',methods =['GET','POST'])

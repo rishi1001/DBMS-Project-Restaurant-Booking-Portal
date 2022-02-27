@@ -1,4 +1,29 @@
 {% extends 'base2.html' %}
 {% block content %}
-Booking Form for user
+<br><br>
+<div class="container">
+    <div class="col-lg-4 mx-auto text-center form p-4">
+        <div class="px-2">
+            <div class="text-center"><h3>Book Your Table</h3></div><br>
+            <form class="justify-content-center" method="POST">
+                <div class="form-group">
+                    <label for="tot_person">Total Persons </label>
+                    <input type="tot_person" class="form-control" id="tot_person" name="tot_person" aria-describedby="tot_person" placeholder="Enter Total Persons" required>
+                </div>
+                <br>
+                <div class="form-group">
+                    <label for="date">Date </label>
+                    <input type="date" class="form-control" id="date" name="date" aria-describedby="date" placeholder="Enter Date" required>
+                </div>
+                <div class="form-group">
+                    <label for="time">Time </label>
+                    <input type="time" class="form-control" id="time" name="time" aria-describedby="time" placeholder="Enter Time" required>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-danger btn-lg">Book!</button>
+                <br>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
