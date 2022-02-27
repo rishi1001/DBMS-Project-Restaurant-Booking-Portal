@@ -1,4 +1,4 @@
 # . venv/bin/activate
 export FLASK_APP=app
 export FLASK_ENV=development
-flask run -p 5054
+flask run -p 5045

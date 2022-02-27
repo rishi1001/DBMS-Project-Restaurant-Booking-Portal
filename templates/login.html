@@ -1,27 +1,64 @@
 {% extends 'base1.html' %}
 {% block content %}
 <br><br>
-<div class="text-center"><h3>Login</h3></div>
 <div class="container">
+	<div class="row">
 		<div class="col-lg-4 mx-auto text-center form p-4">
 			<div class="px-2">
+				<div class="text-center"><h3>User Login</h3></div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
 						<label for="InputUsername">Username</label>
-						<input type="username" class="form-control" id="username1" name="username" aria-describedby="usernamelHelp" placeholder="Enter username">
+						<input type="username" class="form-control" id="username1" name="username1" aria-describedby="usernamelHelp" placeholder="Enter username">
 					</div>
+					{%if sess.error == 1 and sess.login_user_username_err == 1%}
+						<h6 style="color:red;">Invalid Username</h6>
+					{%endif%}
 					<br>
 					<div class="form-group">
 						<label for="exampleInputPassword1">Password</label>
-						<input type="password" class="form-control" id="password1" name="password" placeholder="Password">
+						<input type="password" class="form-control" id="password1" name="password1" placeholder="Password">
 					</div>
+					{%if sess.error == 1 and sess.login_user_password_err == 1%}
+						<h6 style="color:red;">Invalid Password</h6>
+					{%endif%}
 					<br>
+					<input type="hidden" name="type_" value= "0" id= "type_" />
 					<button type="submit" class="btn btn-success btn-lg">Submit</button>
 					<br><br>
-					Or <a href="{{ url_for('register')}}">Register here</a>
 				</form>
 			</div>
 		</div>
+		<div class="col-lg-4 mx-auto text-center form p-4">
+			<div class="px-2">
+				<div class="text-center"><h3>Restaurant Login</h3></div><br>
+				<form class="justify-content-center" method="POST">
+					<div class="form-group">
+						<label for="InputUsername">Username</label>
+						<input type="username" class="form-control" id="username2" name="username2" aria-describedby="usernamelHelp" placeholder="Enter username">
+					</div>
+					{%if sess.error == 1 and sess.login_rest_username_err == 1%}
+						<h6 style="color:red;">Invalid Username</h6>
+					{%endif%}
+					<br>
+					<div class="form-group">
+						<label for="exampleInputPassword1">Password</label>
+						<input type="password" class="form-control" id="password2" name="password2" placeholder="Password">
+					</div>
+					{%if sess.error == 1 and sess.login_rest_password_err == 1%}
+						<h6 style="color:red;">Invalid Password</h6>
+					{%endif%}
+					<br>
+					<input type="hidden" name="type_" value= "1" id= "type_" />
+					<button type="submit" class="btn btn-success btn-lg">Submit</button>
+					<br><br>
+					
+				</form>
+			</div>
+		</div>
+		
+	</div>
 </div>
+<div class="text-center"><h4>Or <a href="{{ url_for('register')}}">Register here</a></h4></div>
 
 {% endblock %}

@@ -8,20 +8,29 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(
-    host = "localhost",
-    database = "col362project",
-    user = "postgres",
-    password = "your_password"
-    )
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "your_password")
     return conn
 
+def reset_errors():
+    session['error'] = 0
+    session['login_user_username_err'] = 0
+    session['login_user_password_err'] = 0
+    session['login_rest_username_err'] = 0
+    session['login_rest_password_err'] = 0
+    session['reg_user_username_err'] = 0
+    session['reg_user_password_err'] = 0
+    session['reg_rest_username_err'] = 0
+    session['reg_rest_password_err'] = 0
 
+@app.before_request
+def before_request():
+    if 'userid' not in session:
+        session['userid'] = -1
+        reset_errors()
+        
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if 'userid' not in session:
-        session['userid'] = -1
     if session.get('userid') > 0:
         return redirect(url_for('profile'))
 
@@ -29,12 +38,11 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'userid' not in session:
-        session['userid'] = -1
     if request.method == 'POST':
+        reset_errors()
         session['userid'] = -1
-        username=request.form['username']
-        password=request.form['password']
+        username=request.form['username1']
+        password=request.form['password1']
         hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) # To generate hash
         if bcrypt.checkpw(password.encode('utf-8'), hash_): # To compare hash with unhashed if same
             print(hash_)
@@ -44,7 +52,7 @@ def login():
             return redirect(url_for('profile'))
         else:
             return redirect(url_for('login'))
-    return render_template('login.html')
+    return render_template('login.html', sess=session)
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -53,14 +61,10 @@ def logout():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-    if 'userid' not in session:
-        session['userid'] = -1
     return render_template('home.html', sess=session)
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    if 'userid' not in session:
-        session['userid'] = -1
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
     conn = get_db_connection()
@@ -71,13 +75,11 @@ def profile():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-
-    if 'userid' not in session:
-        session['userid'] = -1
     if request.method == 'POST':
+        reset_errors()
         session['userid'] = -1
-        username=request.form['username2']
-        password=request.form['password2']
+        username=request.form['username3']
+        password=request.form['password3']
         hash_ = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         # Now, establish a connection to the database and put the username and password in login_info
         conn = get_db_connection()
