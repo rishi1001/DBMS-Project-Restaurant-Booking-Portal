@@ -29,6 +29,7 @@
                 {% endfor %}
             </select>
         </div>
+        <input type="hidden" name="type_" value= "0" id= "type_" />
     <button type="submit" class="btn btn-success btn-small">Submit</button>
     </form>
 </div>
@@ -40,6 +41,8 @@ Here are your faviourite Restaurants:
 	  <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
 	  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
 	  <a href={{restaurant[1]}} class="card-link">Link to Restaurant Page</a>
+      <input type="hidden" name="type_" value= "1" id= "type_" />          
+      <button type="submit" class="btn btn-danger btn-small" method="POST">Book Now</button>
 	</div>
   </div>
 {% endfor %}

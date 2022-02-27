@@ -135,7 +135,7 @@ def home():
 def profile():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
-    if request.method=="POST":
+    if request.method == 'POST' and request.form['type_'] == '0':
         # how to know if user has actually selected it ?
         cost = int(request.form['cost'])
         if cost==0:
@@ -153,11 +153,15 @@ def profile():
         cur = conn.cursor()
         cur.execute("SELECT cuisineid FROM cuisinesref WHERE name = %s",(cuisine,))
         cuisineid = cur.fetchall()[0][0]
-        print(type(cost),rating,cuisineid,cuisine)
+        # print(type(cost),rating,cuisineid,cuisine)
         q1 = "SELECT name,url FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s  limit 10;"
         cur.execute(q1,(costhigh,costlow,rating+1,rating,cuisineid)) 
         restaurants = cur.fetchall()
         return render_template('profile.html', restaurants = restaurants)
+    elif request.method == 'POST' and request.form['type_'] == '1':
+        # booking button to reach here ? 
+        print("get here by pressing booking button")
+        return redirect(url_for('booking'))
     # return render_template('profile.html')
     conn = get_db_connection()
     cur = conn.cursor()
@@ -166,6 +170,12 @@ def profile():
     cur.execute("SELECT name FROM cuisinesref")
     cuisines = cur.fetchall()
     return render_template('profile.html', restaurants = restaurants, cuisines = cuisines)
+
+@app.route('/booking', methods=['GET', 'POST'])
+def booking():
+    if session.get('restid') <= 0:
+        return redirect(url_for('home'))
+    return render_template('booking.html', sess=session)
 
 @app.route('/restprofile', methods=['GET', 'POST'])
 def restprofile():
