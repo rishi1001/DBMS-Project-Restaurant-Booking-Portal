@@ -60,25 +60,25 @@
 					<br>
 					<div class="form-group">
 						<label for="exampleCategory">Category</label>
-						<select name="category" id = "category">
+						<select name="category" id = "category" placeholder = "Select Category">
 						{% for j in categorylist %}
-						<option value = {{j[0]}}> {{j[0]}} </option>
+						<option value = '{{j[0]}}'> {{j[0]}} </option>
 						{% endfor %}
 						</select>
 					</div>
 					<br>
 					<div class="form-group">
 						<label for="exampletype">Type</label>
-						<select name="type" id = "type">
+						<select name="type" id = "type" placeholder = "Select type">
 						{% for j in typelist %}
-						<option value = {{j[0]}}> {{j[0]}} </option>
+						<option value = '{{j[0]}}'> {{j[0]}} </option>
 						{% endfor %}
 						</select>
 					</div>
 					<br>
 					<div class="form-group">
 						<label for="exampleonlineorder">Online Order Supported ?</label>
-						<select name="onlineorder" id = "onlineorder">
+						<select name="onlineorder" id = "onlineorder" placeholder = "Select Yes/No">
 						<option value = "Yes"> Yes </option>
 						<option value = "No"> No </option>
 						</select>

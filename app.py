@@ -207,7 +207,6 @@ def register():
         address = request.form['address']
         phonenum = request.form['phonenum']
         typerest = request.form.get('type')
-        print(typerest) # Why getting only the first word ?? # FIX BUG
         if len(username) == 0 or len(username.replace(' ', '')) == 0 or not username.replace(' ', '').isalnum():
             session['error'] = 1
             session['reg_rest_username_err'] = 1
@@ -297,8 +296,8 @@ def register():
         conn.commit()
 
         # Need to check if results have actually been commited
-        cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
-        print(cur.fetchall())
+        #cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
+        #print(cur.fetchall())
         return redirect(url_for('restprofile'))
     # Implement drop down list
     conn = get_db_connection()
