@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "himthebiscuit")
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "")
     return conn
 
 def reset_errors():
@@ -296,8 +296,14 @@ def register():
         conn.commit()
 
         # Need to check if results have actually been commited
-        #cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
-        #print(cur.fetchall())
+        cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
+        print(cur.fetchall())
+        cur.execute("""SELECT * from types ORDER BY restaurantid DESC limit 1""")
+        print(cur.fetchall())
+        cur.execute("""SELECT * from phones ORDER BY restaurantid DESC limit 1""")
+        print(cur.fetchall())
+        cur.execute("""SELECT * from locationref ORDER BY locationid DESC limit 1""")
+        print(cur.fetchall())
         return redirect(url_for('restprofile'))
     # Implement drop down list
     conn = get_db_connection()
