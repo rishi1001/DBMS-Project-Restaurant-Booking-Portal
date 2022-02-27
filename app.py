@@ -299,7 +299,10 @@ def restprofile():
     cur.execute(q2,t2)
     context['reviews'] = [[x[0], x[1], x[2]] for x in cur.fetchall()]
     for i in range(len(context['reviews'])):
-        context['reviews'][i][1] = str(context['reviews'][i][1])+'/5'
+        if context['reviews'][i][1] is not None:
+            context['reviews'][i][1] = str(context['reviews'][i][1])+'/5'
+        else:
+            context['reviews'][i][1] = 'N.A.'
         user = context['reviews'][i][0]
         if user is None:
             user = 'Anonymous'
