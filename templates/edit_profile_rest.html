@@ -1,11 +1,10 @@
-{% extends 'base2.html' %}
+{% extends 'base3.html' %}
 {% block content %}
-<br><br>
 <div class="container">
 	<div class ="row">
 		<div class="col-lg-4 mx-auto text-center form p-4">
 			<div class="px-2">
-				<div class="text-center"><h3>Edit Profile</h3></div><br>
+				<div class="text-center"><h2 style="color:blue;">Edit Profile</h2></div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
 						<label for="edit_phone_num">Phone Number</label>
@@ -13,8 +12,8 @@
 					</div>
 					<br>
 					<input type="hidden" name="type__" value= "1" id= "type__" />
-					<button type="submit" class="btn btn-success btn-lg">Save Number</button>
-					<br>
+					<button type="submit" class="btn btn-primary btn-md">Save Number</button>
+					<br><br>
 					{%if sess.error == 1 and sess.edit_phone_rest_err == 1%}
 						<h6 style="color:red;">Invalid Phone Number</h6>
 					{%endif%}
@@ -29,8 +28,8 @@
 					</div>
 					<br>
 					<input type="hidden" name="type__" value= "2" id= "type__" />
-					<button type="submit" class="btn btn-success btn-lg">Save URL</button>
-					<br>
+					<button type="submit" class="btn btn-primary btn-md">Save URL</button>
+					<br><br>
 					{%if sess.saved == 1 and sess.edit_URL_rest_saved == 1%}
 						<h6 style="color:green;">New URL Saved !</h6>
 					{%endif%}
@@ -42,8 +41,8 @@
 					</div>
 					<br>
 					<input type="hidden" name="type__" value= "3" id= "type__" />
-					<button type="submit" class="btn btn-success btn-lg">Save Cost</button>
-					<br>
+					<button type="submit" class="btn btn-primary btn-md">Save Cost</button>
+					<br><br>
 					{%if sess.error == 1 and sess.edit_cost_rest_err == 1%}
 						<h6 style="color:red;">Invalid Cost</h6>
 					{%endif%}
@@ -58,8 +57,8 @@
 					</div>
 					<br>
 					<input type="hidden" name="type__" value= "4" id= "type__" />
-					<button type="submit" class="btn btn-success btn-lg">Save Password</button>
-					<br>
+					<button type="submit" class="btn btn-primary btn-md">Save Password</button>
+					<br><br>
 					{%if sess.error == 1 and sess.edit_password_rest_err == 1%}
 						<h6 style="color:red;">Invalid Password</h6>
 					{%endif%}
@@ -70,7 +69,7 @@
 				</form>
 				<form class="justify-content-center" method="POST">
 					<input type="hidden" name="type__" value= "5" id= "type__" />
-					<button type="submit" class="btn btn-success btn-lg">Back to Home</button>
+					<button type="submit" class="btn btn-primary btn-md">Back to Profile</button>
 					<br>
 				</form>
 			</div>
