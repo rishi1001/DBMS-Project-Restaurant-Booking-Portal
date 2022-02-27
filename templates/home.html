@@ -1,7 +1,11 @@
 {%if sess.userid == -1 and sess.restid == -1%}
 	{% extends 'base1.html' %}
 {% else %}
-	{% extends 'base2.html' %}
+	{%if sess.restid == -1%}
+		{% extends 'base2.html' %}
+	{%else%}
+		{% extends 'base3.html' %}
+	{%endif%}
 {%endif%}
 {% block content %}
 Write description of website here

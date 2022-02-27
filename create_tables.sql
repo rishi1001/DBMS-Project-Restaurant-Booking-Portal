@@ -120,6 +120,9 @@ CREATE table if not EXISTS restaurant_login(
 \copy restaurants from '/Users/karan/COL362/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
 Update restaurants set locationid = NULL where locationid = -1;
+Update restaurants set costfortwo = NULL where costfortwo = -1;
+Update restaurants set rating = NULL where rating = -1;
+
 
 alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locationid) REFERENCES locationref(locationid);
 
