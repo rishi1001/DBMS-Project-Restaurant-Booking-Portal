@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "himthebiscuit")
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "Crimson1")
     conn.autocommit = True
     return conn
 
@@ -51,12 +51,12 @@ def get_restaurant_info(restid, short=0):
     context['name'] = info[7]
     context['url'] = info[8]
     context['address'] = info[9]
-    context['rating'] = round(info[4], 1)
+    context['rating'] = info[4]
     context['onlineorder'] = info[3]
     if context['rating'] is None:
         context['rating'] = 'Not yet rated'
     else:
-        context['rating'] = str(context['rating'])+'/5'
+        context['rating'] = str(round(context['rating'], 1))+'/5'
     context['votes'] = int(info[5])
     context['costfortwo'] = info[6]
     if context['costfortwo'] is None:
@@ -303,7 +303,7 @@ def profile():
         q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s  limit 10;"
         if rating==5 and cuisine=='All':
             if rest_pre=="":
-                q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants WHERE costfortwo<%s and costfortwo>=%s limit 10;"
+                q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants WHERE costfortwo<%s and costfortwo>=%s limit 4;"
                 cur.execute(q1,(costhigh,costlow)) 
             else:
                 q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and name like %s limit 10;"
@@ -330,7 +330,6 @@ def profile():
                 q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and name like %s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s limit 10;"
                 cur.execute(q1,(costhigh,costlow,rating+1,rating,cuisineid,rest_pre+'%'))
 
-
         restaurants = cur.fetchall()
         print(restaurants)
         cur.execute("SELECT name FROM cuisinesref")
@@ -339,7 +338,7 @@ def profile():
     # return render_template('profile.html')
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT name,url,restaurantid FROM restaurants limit 10;")
+    cur.execute("SELECT name,url,restaurantid FROM popular limit 100;")
     restaurants = cur.fetchall()
     cur.execute("SELECT name FROM cuisinesref")
     cuisines = cur.fetchall()
@@ -741,8 +740,8 @@ def register():
         cur.execute(q1,t1)
         listedid = (cur.fetchall())[0][0]
         # obtain restaurantid
-        q1 ="""INSERT INTO restaurants VALUES(%s,%s,%s,%s,0,0,%s,%s,%s,%s)"""
-        t1 = (restaurantid,locationid,listedid,onlineorder,costfortwo,username,url,address)
+        q1 ="""INSERT INTO restaurants VALUES(%s,%s,%s,%s,%s,0,%s,%s,%s,%s)"""
+        t1 = (restaurantid,locationid,listedid,onlineorder,None,costfortwo,username,url,address)
         cur.execute(q1,t1)
         conn.commit()
         q1 = """INSERT INTO phones VALUES(%s,%s)"""
@@ -761,10 +760,10 @@ def register():
         conn.commit()
 
         # Need to check if results have actually been commited
-        cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
-        cur.execute("""SELECT * from types ORDER BY restaurantid DESC limit 1""")
-        cur.execute("""SELECT * from phones ORDER BY restaurantid DESC limit 1""")
-        cur.execute("""SELECT * from locationref ORDER BY locationid DESC limit 1""")
+        # cur.execute("""SELECT * from restaurants ORDER BY restaurantid DESC limit 1""")
+        # cur.execute("""SELECT * from types ORDER BY restaurantid DESC limit 1""")
+        # cur.execute("""SELECT * from phones ORDER BY restaurantid DESC limit 1""")
+        # cur.execute("""SELECT * from locationref ORDER BY locationid DESC limit 1""")
         return redirect(url_for('restprofile'))
     # Implement drop down list
     conn = get_db_connection()
