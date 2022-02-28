@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "")
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "himthebiscuit")
     conn.autocommit = True
     return conn
 

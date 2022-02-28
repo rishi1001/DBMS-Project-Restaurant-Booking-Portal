@@ -1,14 +1,26 @@
 {% extends 'base1.html' %}
 {% block content %}
 <br><br>
+<style>
+	body{
+background-image:url('../static/about.jpg');
+background-repeat: no-repeat;
+height:100%;
+background-size:cover;
+}
+</style>
 <div class="container">
 	<div class="row">
 		<div class="col-lg-4 mx-auto text-center form p-4">
 			<div class="px-2">
-				<div class="text-center"><h3>User Login</h3></div><br>
+				<div class="text-center" style="font-size:39px;color:orange;text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black;"><b>User Login</b></div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
-						<label for="InputUsername">Username</label>
+						<label for="InputUsername" style="color:cyan;">Username</label>
 						<input type="username" class="form-control" id="username1" name="username1" aria-describedby="usernamelHelp" placeholder="Enter username">
 					</div>
 					{%if sess.error == 1 and sess.login_user_username_err == 1%}
@@ -16,7 +28,7 @@
 					{%endif%}
 					<br>
 					<div class="form-group">
-						<label for="exampleInputPassword1">Password</label>
+						<label for="exampleInputPassword1" style="color:cyan;">Password</label>
 						<input type="password" class="form-control" id="password1" name="password1" placeholder="Password">
 					</div>
 					{%if sess.error == 1 and sess.login_user_password_err == 1%}
@@ -31,10 +43,14 @@
 		</div>
 		<div class="col-lg-4 mx-auto text-center form p-4">
 			<div class="px-2">
-				<div class="text-center"><h3>Restaurant Login</h3></div><br>
+				<div class="text-center" style="font-size:39px;color:orange;text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black;"><b>Restaurant Login</b></div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
-						<label for="InputUsername">Username</label>
+						<label for="InputUsername" style="color:cyan;">Username</label>
 						<input type="username" class="form-control" id="username2" name="username2" aria-describedby="usernamelHelp" placeholder="Enter username">
 					</div>
 					{%if sess.error == 1 and sess.login_rest_username_err == 1%}
@@ -42,7 +58,7 @@
 					{%endif%}
 					<br>
 					<div class="form-group">
-						<label for="exampleInputPassword1">Password</label>
+						<label for="exampleInputPassword1" style="color:cyan;">Password</label>
 						<input type="password" class="form-control" id="password2" name="password2" placeholder="Password">
 					</div>
 					{%if sess.error == 1 and sess.login_rest_password_err == 1%}
@@ -59,6 +75,6 @@
 		
 	</div>
 </div>
-<div class="text-center"><h4>Or <a href="{{ url_for('register')}}">Register here</a></h4></div>
+<div class="text-center" style="font-size:30px">Or <a href="{{ url_for('register')}}" style="color:red"><b>Register here</b></a></div>
 
 {% endblock %}

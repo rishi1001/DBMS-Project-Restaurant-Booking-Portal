@@ -1,5 +1,13 @@
 {% extends 'base2.html' %}
 {% block content %}
+<style>
+    body{
+background-image:url('../static/pic6.jpg');
+background-repeat: no-repeat;
+height:100%;
+background-size:cover;
+}
+</style>
 <br><div class="text-center"><h2 style="color:blue;"><a href={{context.url}} class="card-link">{{context.name}}</a></h2>
 <form class="justify-content-center" method="GET" action="{{url_for('booking')}}">
 	<div class="card-body">
@@ -18,22 +26,22 @@
 </nav>
 <div class="tab-content" id="nav-tabContent">
 	<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="nav-info-tab">
-		<div class="text-center">Cuisines: {{context.cuisines}}</div>
+		<div class="text-center" style="color:red;">Cuisines: {{context.cuisines}}</div>
 		<div class="text-center">Location: {{context.location}}</div>
 		<div class="text-center"><h5 style="color:green;">Rated {{context.rating}} by {{context.votes}} people</h5></div>
-		<h4>Listed as</h4>
+		<h4 style="color:red;">Listed as</h4>
 		{{context.listed}}<br><br>
-		<h4>Type of Place</h4>
+		<h4 style="color:red;">Type of Place</h4>
 		{{context.types}}<br><br>
-		<h4>Dishes liked by people</h4>
+		<h4 style="color:red;">Dishes liked by people</h4>
 		{{context.liked}}<br><br>
-		<h4>Average Cost</h4>
+		<h4 style="color:red;">Average Cost</h4>
 		{{context.costfortwo}}<br><br>
-		<h4>Online Order</h4>
+		<h4 style="color:red;">Online Order</h4>
 		{{context.onlineorder}}<br><br>
-		<h4>Call</h4>
+		<h4 style="color:red;">Call</h4>
 		{{context.phones}}<br><br>
-		<h4>Address</h4>
+		<h4 style="color:red;">Address</h4>
 		{{context.address}}<br><br>
 	</div>
 	<div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="nav-reviews-tab">

@@ -1,5 +1,14 @@
 {% extends 'base2.html' %}
 {% block content %}
+<style>
+    body{
+background-image:url('../static/pic6.jpg');
+background-repeat: no-repeat;
+height:100%;
+background-size:cover;
+}
+</style>
+<h1 style="color:purple;text-align: center;" > Current Bookings </h1>
 {% for b in context.current_bookings%}
 		<div class = "card">
 			<div class = "text-center">
