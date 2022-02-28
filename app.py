@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "")
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "himthebiscuit")
     conn.autocommit = True
     return conn
 
@@ -279,23 +279,40 @@ def profile():
         elif cost==1:
             costlow = 5000
             costhigh = 10000
-        else:
+        elif cost==2:
             costlow = 10000
+            costhigh = 999999999
+        else:
+            costlow = 0
             costhigh = 999999999
         rating = int(request.form['rating'])
         cuisine = request.form['cuisine']
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute("SELECT cuisineid FROM cuisinesref WHERE name = %s",(cuisine,))
-        cuisineid = cur.fetchall()[0][0]
+        print(cuisine)
+        if cuisine != 'All':
+            cuisineid = cur.fetchall()[0][0]
 
         session['cuisine_selected'] = cuisine
         print(cuisine)
         session['rating_selected'] = rating
         session['cost_selected'] = cost
-        # also sort and do stuff
+        # also sort and do stuff , also check if only 10 to show ? 
         q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s  limit 10;"
-        cur.execute(q1,(costhigh,costlow,rating+1,rating,cuisineid)) 
+        if rating==5 and cuisine=='All':
+            q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants WHERE costfortwo<%s and costfortwo>=%s limit 10;"
+            cur.execute(q1,(costhigh,costlow)) 
+        elif rating==5 and cuisine!='All':
+            q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s limit 10;"
+            cur.execute(q1,(costhigh,costlow,cuisineid)) 
+        elif rating!=5 and cuisine=='All':
+            q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s limit 10;"
+            cur.execute(q1,(costhigh,costlow,rating+1,rating))
+        else:
+            q1 = "SELECT name,url,restaurants.restaurantid FROM restaurants,cuisines WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s limit 10;"
+            cur.execute(q1,(costhigh,costlow,rating+1,rating,cuisineid))
+
         restaurants = cur.fetchall()
         cur.execute("SELECT name FROM cuisinesref")
         cuisines = cur.fetchall()

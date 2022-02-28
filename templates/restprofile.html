@@ -1,5 +1,13 @@
 {% extends 'base3.html' %}
 {% block content %}
+<style>
+    body{
+background-image:url('../static/pic6.jpg');
+background-repeat: no-repeat;
+height:100%;
+background-size:cover;
+}
+</style>
 <div class="container">
 	<div class ="row">
 		<div class="col-lg-4 mx-auto text-center form p-4">
@@ -17,30 +25,30 @@
 <nav>
   <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
 	<button class="nav-link {{tab_state.0}}" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Information</button>
-	<button class="nav-link {{tab_state.1}}" id="nav-bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab" aria-controls="nav-bookings" aria-selected="false">Current Bookings</button>
+	<button class="nav-link {{tab_state.1}}" id="nav-bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab" aria-controls="nav-bookings" aria-selected="false">Pending Bookings</button>
 	<button class="nav-link {{tab_state.2}}" id="nav-reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="nav-reviews" aria-selected="false">Reviews</button>
-	<button class="nav-link {{tab_state.3}}" id="nav-history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="nav-history" aria-selected="false">History</button>
+	<button class="nav-link {{tab_state.3}}" id="nav-history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="nav-history" aria-selected="false">Processed Bookings</button>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
 	<div class="tab-pane fade {{disp_state.0}}" id="info" role="tabpanel" aria-labelledby="nav-info-tab">
-		<br><div class="text-center"><h3 style="color:blue;"><a href={{context.url}} class="card-link">{{context.name}}</a></h3></div>
-		<div class="text-center">Cuisines: {{context.cuisines}}</div>
+		<br><div class="text-center"><h3 style="color:red;"><a href={{context.url}} class="card-link">{{context.name}}</a></h3></div>
+		<div class="text-center" style="color:red;">Cuisines: {{context.cuisines}}</div>
 		<div class="text-center">Location: {{context.location}}</div>
 		<div class="text-center"><h5 style="color:green;">Rated {{context.rating}} by {{context.votes}} people</h5></div>
-		<h4>Listed as</h4>
+		<h4 style="color:red;">Listed as</h4>
 		{{context.listed}}<br><br>
-		<h4>Type of Place</h4>
+		<h4 style="color:red;">Type of Place</h4>
 		{{context.types}}<br><br>
-		<h4>Dishes liked by people</h4>
+		<h4 style="color:red;">Dishes liked by people</h4>
 		{{context.liked}}<br><br>
-		<h4>Average Cost</h4>
+		<h4 style="color:red;">Average Cost</h4>
 		{{context.costfortwo}}<br><br>
-		<h4>Online Order</h4>
+		<h4 style="color:red;">Online Order</h4>
 		{{context.onlineorder}}<br><br>
-		<h4>Call</h4>
+		<h4 style="color:red;">Call</h4>
 		{{context.phones}}<br><br>
-		<h4>Address</h4>
+		<h4 style="color:red;">Address</h4>
 		{{context.address}}<br><br>
 	</div>
 	<div class="tab-pane fade {{disp_state.1}}" id="bookings" role="tabpanel" aria-labelledby="nav-bookings-tab">

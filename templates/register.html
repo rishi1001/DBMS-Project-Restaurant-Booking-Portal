@@ -1,14 +1,26 @@
 {% extends 'base1.html' %}
 {% block content %}
 <br><br>
+<style>
+	body{
+background-image:url('../static/pic2.jpg');
+background-repeat: no-repeat;
+height:100%;
+background-size:cover;
+}
+</style>
 <div class="container">
 	<div class="row">
 		<div class="col-lg-4 mx-auto text-center form p-4">
 			<div class="px-2">
-				<div class="text-center"><h3>User Register</h3></div><br>
+				<div class="text-center" style="font-size:36px;color:orange;text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black;">User Register</div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
-						<label for="InputUsername">Username (Only Alphanumeric with spaces)</label>
+						<label for="InputUsername" style="color:cyan;">Username (Only Alphanumeric with spaces)</label>
 						<input type="username" class="form-control" id="username3" name="username3" aria-describedby="usernamelHelp" placeholder="Enter username">
 					</div>
 					{%if sess.error == 1 and sess.reg_user_username_err == 1%}
@@ -16,7 +28,7 @@
 					{%endif%}
 					<br>
 					<div class="form-group">
-						<label for="exampleInputPassword1">Password (Only Alphanumeric)</label>
+						<label for="exampleInputPassword1" style="color:cyan;">Password (Only Alphanumeric)</label>
 						<input type="password" class="form-control" id="password3" name="password3" placeholder="Password">
 					</div>
 					{%if sess.error == 1 and sess.reg_user_password_err == 1%}
@@ -31,10 +43,14 @@
 		</div>
 		<div class="col-lg-4 mx-auto text-center form p-4">
 			<div class="px-2">
-				<div class="text-center"><h3>Restaurant Register</h3></div><br>
+				<div class="text-center" style="font-size:36px;color:orange;text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black;">Restaurant Register</div><br>
 				<form class="justify-content-center" method="POST">
 					<div class="form-group">
-						<label for="InputUsername">Username (Only Alphanumeric with spaces)</label>
+						<label for="InputUsername" style="color:cyan;">Username (Only Alphanumeric with spaces)</label>
 						<input type="username" class="form-control" id="username4" name="username4" aria-describedby="usernamelHelp" placeholder="Enter username">
 					</div>
 					{%if sess.error == 1 and sess.reg_rest_username_err == 1%}
@@ -42,7 +58,7 @@
 					{%endif%}
 					<br>
 					<div class="form-group">
-						<label for="exampleInputPassword1">Password (Only Alphanumeric)</label>
+						<label for="exampleInputPassword1" style="color:cyan;">Password (Only Alphanumeric)</label>
 						<input type="password" class="form-control" id="password4" name="password4" placeholder="Password">
 					</div>
 					{%if sess.error == 1 and sess.reg_rest_password_err == 1%}
@@ -50,12 +66,12 @@
 					{%endif%}
 					<br>
 					<div class="form-group">
-						<label for="exampleInputlocation">Location (Only Alphanumeric)</label>
+						<label for="exampleInputlocation" style="color:cyan;">Location (Only Alphanumeric)</label>
 						<input type="location" class="form-control" id="location" name="location" placeholder="Location">
 					</div>
 					<br>
 					<div class="form-group">
-						<label for="exampleCategory">Category</label>
+						<label for="exampleCategory" style="color:cyan;">Category</label>
 						<select name="category" id = "category" placeholder = "Select Category">
 						{% for j in categorylist %}
 						<option value = '{{j[0]}}'> {{j[0]}} </option>
@@ -64,7 +80,7 @@
 					</div>
 					<br>
 					<div class="form-group">
-						<label for="exampletype">Type</label>
+						<label for="exampletype" style="color:cyan;">Type</label>
 						<select name="type" id = "type" placeholder = "Select type">
 						{% for j in typelist %}
 						<option value = '{{j[0]}}'> {{j[0]}} </option>
@@ -73,7 +89,7 @@
 					</div>
 					<br>
 					<div class="form-group">
-						<label for="exampleonlineorder">Online Order Supported ?</label>
+						<label for="exampleonlineorder" style="color:cyan;">Online Order Supported ?</label>
 						<select name="onlineorder" id = "onlineorder" placeholder = "Select Yes/No">
 						<option value = "Yes"> Yes </option>
 						<option value = "No"> No </option>
@@ -81,22 +97,22 @@
 					</div>
 					<br>
 					<div class="form-group">
-						<label for="costfortwo">Cost For Two (in Rupees)</label>
+						<label for="costfortwo" style="color:cyan;">Cost For Two (in Rupees)</label>
 						<input type="costfortwo" class="form-control" id="costfortwo" name="costfortwo" placeholder="Cost for Two">
 					</div>
 					<br>
 					<div class="form-group">
-						<label for="urll">Website URL</label>
+						<label for="urll" style="color:cyan;">Website URL</label>
 						<input type="urll" class="form-control" id="urll" name="urll" placeholder="URL">
 					</div>
 					<br>
 					<div class="form-group">
-						<label for="address">Address</label>
+						<label for="address" style="color:cyan;">Address</label>
 						<input type="address" class="form-control" id="address" name="address" placeholder="Address">
 					</div>
 					<br>
 					<div class="form-group">
-						<label for="phonenum">Phone Number</label>
+						<label for="phonenum" style="color:cyan;">Phone Number</label>
 						<input type="phonenum" class="form-control" id="phonenum" name="phonenum" placeholder="Phone Number">
 					</div>
 					<br>

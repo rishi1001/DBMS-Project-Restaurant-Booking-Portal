@@ -125,13 +125,13 @@ CREATE table if NOT EXISTS bookings(
     CONSTRAINT booking_foreign_key2 FOREIGN KEY (restaurantid) REFERENCES restaurants(restaurantid)
 );
 
-\copy cuisinesref from '/Users/karan/COL362/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisinesref from '/Users/rishi_1001/Documents/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy listedref from '/Users/karan/COL362/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy listedref from '/Users/rishi_1001/Documents/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy locationref from '/Users/karan/COL362/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
+\copy locationref from '/Users/rishi_1001/Documents/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy restaurants from '/Users/karan/COL362/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
+\copy restaurants from '/Users/rishi_1001/Documents/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
 Update restaurants set locationid = NULL where locationid < 0;
 Update restaurants set costfortwo = NULL where costfortwo < 0;
@@ -141,19 +141,19 @@ Update restaurants set rating = NULL where rating < 0;
 alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locationid) REFERENCES locationref(locationid);
 
 
-\copy cuisines from '/Users/karan/COL362/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisines from '/Users/rishi_1001/Documents/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy likedref from '/Users/karan/COL362/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy likedref from '/Users/rishi_1001/Documents/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy liked from '/Users/karan/COL362/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
+\copy liked from '/Users/rishi_1001/Documents/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy phones from '/Users/karan/COL362/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
+\copy phones from '/Users/rishi_1001/Documents/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy typesref from '/Users/karan/COL362/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy typesref from '/Users/rishi_1001/Documents/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy types from '/Users/karan/COL362/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
+\copy types from '/Users/rishi_1001/Documents/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy reviews from '/Users/karan/COL362/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
+\copy reviews from '/Users/rishi_1001/Documents/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
 
 Update reviews set userid = NULL where userid < 0;
 
@@ -161,7 +161,7 @@ alter table reviews add CONSTRAINT user_foreign_key FOREIGN KEY (userid) REFEREN
 
 -- to restaurant_login, add entries restaurantid, username as restaurant name 
 -- INSERT INTO restaurant_login(restaurantid,username) SELECT restaurantid,name FROM restaurants;
-\copy restaurant_login from '/Users/karan/COL362/DBMS-Project/Data/restaurant_login.csv' delimiter ',' csv header encoding 'win1250';
+\copy restaurant_login from '/Users/rishi_1001/Documents/DBMS-Project/Data/restaurant_login.csv' delimiter ',' csv header encoding 'win1250';
 -- UPDATE restaurant_login SET password = '$2b$12$at.aLAFoqlwUdFYRQfSp/ueX6qRJjX2JFoAZmsrA7sGztz4RPCuBG';
 
 alter table restaurants add CONSTRAINT restaurant_foreign_key FOREIGN KEY (restaurantid) REFERENCES restaurant_login(restaurantid);
