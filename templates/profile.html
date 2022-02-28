@@ -6,33 +6,42 @@
         <div class="form-group">
             <label for="exampleCost">Cost for Two</label>
             <select name="cost" id = "cost" placeholder = "Select Cost">
-                {%if sess.cost_selected == 0 or sess.cost_selected == -1%}
+                {%if sess.cost_selected == 0 %}
                 <option value = 0 selected> Less Than 1000 </option>
                 <option value = 1> 1000-5000 </option>
                 <option value = 2> Greater Than 5000 </option>
+                <option value = 3 > All </option>
 				{%endif%}
                 {%if sess.cost_selected == 1 %}
                 <option value = 0> Less Than 1000 </option>
                 <option value = 1 selected> 1000-5000 </option>
                 <option value = 2> Greater Than 5000 </option>
+                <option value = 3 > All </option>
 				{%endif%}
                 {%if sess.cost_selected == 2 %}
                 <option value = 0> Less Than 1000 </option>
                 <option value = 1> 1000-5000 </option>
                 <option value = 2 selected> Greater Than 5000 </option>
+                <option value = 3 > All </option>
 				{%endif%}
-                
+                {%if sess.cost_selected == 3 or sess.cost_selected == -1 %}
+                <option value = 0> Less Than 1000 </option>
+                <option value = 1> 1000-5000 </option>
+                <option value = 2> Greater Than 5000 </option>
+                <option value = 3 selected> All </option>
+				{%endif%}
             </select>
         </div>
         <div class="form-group">
             <label for="exampleRatingr">Rating</label>
             <select name="rating" id = "rating" placeholder = "Select Rating">
-                {%if sess.rating_selected == 4 or sess.rating_selected == -1  %}
+                {%if sess.rating_selected == 4  %}
                 <option value = 4 selected> 4-5 </option>
                 <option value = 3> 3-4 </option>
                 <option value = 2> 2-3 </option>
                 <option value = 1> 1-2 </option>
                 <option value = 0> 0-1 </option>
+                <option value = 5> All </option>
                 {%endif%}
                 {%if sess.rating_selected == 3 %}
                 <option value = 4> 4-5 </option>
@@ -40,6 +49,7 @@
                 <option value = 2> 2-3 </option>
                 <option value = 1> 1-2 </option>
                 <option value = 0> 0-1 </option>
+                <option value = 5> All </option>
                 {%endif%}
                 {%if sess.rating_selected == 2 %}
                 <option value = 4> 4-5 </option>
@@ -47,6 +57,7 @@
                 <option value = 2 selected> 2-3 </option>
                 <option value = 1> 1-2 </option>
                 <option value = 0> 0-1 </option>
+                <option value = 5> All </option>
                 {%endif%}
                 {%if sess.rating_selected == 1 %}
                 <option value = 4> 4-5 </option>
@@ -54,19 +65,30 @@
                 <option value = 2> 2-3 </option>
                 <option value = 1 selected> 1-2 </option>
                 <option value = 0> 0-1 </option>
+                <option value = 5> All </option>
                 {%endif%}
-                {%if sess.rating_selected == 0 %}
+                {%if sess.rating_selected == 0  %}
                 <option value = 4> 4-5 </option>
                 <option value = 3> 3-4 </option>
                 <option value = 2> 2-3 </option>
                 <option value = 1> 1-2 </option>
                 <option value = 0 selected> 0-1 </option>
+                <option value = 5> All </option>
+                {%endif%}
+                {%if sess.rating_selected == 5 or sess.rating_selected == -1 %}
+                <option value = 4> 4-5 </option>
+                <option value = 3> 3-4 </option>
+                <option value = 2> 2-3 </option>
+                <option value = 1> 1-2 </option>
+                <option value = 0> 0-1 </option>
+                <option value = 5 selected> All </option>
                 {%endif%}
             </select>
         </div>
         <div class="form-group">
             <label for="exampleCuisine">Cuisine</label>
             <select name="cuisine" id = "cuisine" placeholder = "Select Cuisine">
+                <option value = 'All' selected> All </option>
                 {% for j in cuisines %}
                     {%if sess.cuisine_selected == j[0] %}
                     <option value = '{{j[0]}}' selected> {{j[0]}} </option>
