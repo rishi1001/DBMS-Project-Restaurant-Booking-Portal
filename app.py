@@ -33,6 +33,110 @@ def reset_errors():
     session['rating_selected']=-1
     session['cost_selected']=-1
 
+
+def get_restaurant_info(restid, short=0):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    q1 = """SELECT * FROM restaurants WHERE restaurantid = %s limit 1"""
+    t1 = (restid,)
+    cur.execute(q1,t1)
+    y = cur.fetchall()
+    if len(y) == 0:
+        return -1
+    info = y[0]
+    context = {}
+    context['id'] = info[0]
+    context['name'] = info[7]
+    context['url'] = info[8]
+    context['address'] = info[9]
+    context['rating'] = info[4]
+    context['onlineorder'] = info[3]
+    if context['rating'] is None:
+        context['rating'] = 'Not yet rated'
+    else:
+        context['rating'] = str(context['rating'])+'/5'
+    context['votes'] = int(info[5])
+    context['costfortwo'] = info[6]
+    if context['costfortwo'] is None:
+        context['costfortwo'] = 'Unknown'
+    else:
+        context['costfortwo'] = 'Rs. '+str(context['costfortwo'])+' for two people (approx.)'
+    context['locationid'] = info[1]
+    if context['locationid'] is None:
+        context['location'] = 'Unknown'
+    else:
+        q2 = """SELECT * FROM locationref WHERE locationid = %s"""
+        t2 = (context['locationid'],)
+        cur.execute(q2,t2)
+        context['location'] = cur.fetchall()[0][1]
+    context['listedid'] = info[2]
+    q2 = """SELECT * FROM listedref WHERE listedid = %s"""
+    t2 = (context['listedid'],)
+    cur.execute(q2,t2)
+    context['listed'] = cur.fetchall()[0][1]
+    q2 = """SELECT name FROM (SELECT * FROM types WHERE restaurantid = %s) as temp, typesref where temp.typeid=typesref.typeid"""
+    t2 = (restid,)
+    cur.execute(q2,t2)
+    context['types'] = ''
+    for x in cur.fetchall():
+        context['types'] += x[0]+', '
+    if len(context['types']) > 0:
+        context['types'] = context['types'][:-2]
+    else:
+        context['types'] = 'Unknown'
+    q2 = """SELECT name FROM (SELECT * FROM cuisines WHERE restaurantid = %s) as temp, cuisinesref where temp.cuisineid=cuisinesref.cuisineid"""
+    t2 = (restid,)
+    cur.execute(q2,t2)
+    context['cuisines'] = ''
+    for x in cur.fetchall():
+        context['cuisines'] += x[0]+', '
+    if len(context['cuisines']) > 0:
+        context['cuisines'] = context['cuisines'][:-2]
+    else:
+        context['cuisines'] = 'Unknown'
+    if short == 1:
+        return context
+    q2 = """SELECT name FROM (SELECT * FROM liked WHERE restaurantid = %s) as temp, likedref where temp.likedid=likedref.likedid"""
+    t2 = (restid,)
+    cur.execute(q2,t2)
+    context['liked'] = ''
+    for x in cur.fetchall():
+        context['liked'] += x[0]+', '
+    if len(context['liked']) > 0:
+        context['liked'] = context['liked'][:-2]
+    else:
+        context['liked'] = 'Unknown'
+    q2 = """SELECT phone FROM phones WHERE restaurantid = %s"""
+    t2 = (restid,)
+    cur.execute(q2,t2)
+    context['phones'] = ''
+    for x in cur.fetchall():
+        context['phones'] += x[0]+', '
+    if len(context['phones']) > 0:
+        context['phones'] = context['phones'][:-2]
+    else:
+        context['phones'] = 'Unknown'
+    q2 = """SELECT userid, rating, review FROM reviews WHERE restaurantid = %s order by rating desc"""
+    t2 = (restid,)
+    cur.execute(q2,t2)
+    context['reviews'] = [[x[0], x[1], x[2]] for x in cur.fetchall()]
+    for i in range(len(context['reviews'])):
+        if context['reviews'][i][1] is not None:
+            context['reviews'][i][1] = str(context['reviews'][i][1])+'/5'
+        else:
+            context['reviews'][i][1] = 'N.A.'
+        user = context['reviews'][i][0]
+        if user is None:
+            user = 'Anonymous'
+        else:
+            user = int(user)
+            q2 = """SELECT username FROM user_login WHERE userid = %s limit 1"""
+            t2 = (user,)
+            cur.execute(q2,t2)
+            user = cur.fetchall()[0][0]
+        context['reviews'][i][0] = user
+    return context
+
 @app.before_request
 def before_request():
     if 'userid' not in session:
@@ -43,8 +147,10 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if session.get('userid') > 0 or session.get('restid') > 0:
-        return redirect(url_for('profile'))             # profile or restprofile ? 
+    if session.get('userid') > 0:
+        return redirect(url_for('profile'))
+    elif session.get('restid') > 0:
+        return redirect(url_for('restprofile'))
 
     return redirect(url_for('home'))
 
@@ -176,10 +282,6 @@ def profile():
         cur.execute("SELECT name FROM cuisinesref")
         cuisines = cur.fetchall()
         return render_template('profile.html', restaurants = restaurants, cuisines = cuisines, sess=session)
-    elif request.method == 'POST' and request.form['type_'] == '1':
-        # how to get which restaurant is selected ?
-        print(request.form.get("booking_restaurant"))       # maybe save this in session ? 
-        return redirect(url_for('booking'))
     # return render_template('profile.html')
     conn = get_db_connection()
     cur = conn.cursor()
@@ -198,16 +300,32 @@ def booking():
         persons = request.form['tot_person']
         date = request.form['date']                
         time = request.form['time']
+        restid = request.form['restid']
+        if restid.isnumeric():
+            restid=int(restid)
+        if restid < 0:
+            return redirect(url_for('profile'))
         # what to do after booked ? checkout or backat profile page?
         # get restid from booked res id(on clicking book now)
-        t1 = (1,session.get('userid'),1,persons,date,time)      # how to generate booking id? (currently set as 1)
+        t1 = (1,session.get('userid'),restid,persons,date,time)      # how to generate booking id? (currently set as 1)
         q1 = """INSERT INTO bookings VALUES (%s,%s,%s,%s,%s,%s)"""
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute(q1,t1)
         conn.commit()
         print(persons,date,time)
-    return render_template('booking.html', sess=session)
+    print(request.args)
+    if 'restid' not in request.args:
+        return redirect(url_for('profile'))
+    restid = request.args['restid']
+    if restid.isnumeric():
+        restid=int(restid)
+    if restid < 0:
+        return redirect(url_for('profile'))
+    context=get_restaurant_info(int(request.args['restid']), 1)
+    if context == -1:
+        return redirect(url_for('profile'))
+    return render_template('booking.html', context=context)
 
 @app.route('/edit_profile_rest',methods =['GET','POST'])
 def edit_profile_rest():
@@ -278,101 +396,24 @@ def edit_profile_rest():
 def restprofile():
     if session.get('restid') <= 0:
         return redirect(url_for('home'))
-    conn = get_db_connection()
-    cur = conn.cursor()
-    q1 = """SELECT * FROM restaurants WHERE restaurantid = %s limit 1"""
-    t1 = (session['restid'],)
-    cur.execute(q1,t1)
-    info = cur.fetchall()[0]
-    context = {}
-    context['name'] = info[7]
-    context['url'] = info[8]
-    context['address'] = info[9]
-    context['rating'] = info[4]
-    context['onlineorder'] = info[3]
-    if context['rating'] is None:
-        context['rating'] = 'Not yet rated'
-    else:
-        context['rating'] = str(context['rating'])+'/5'
-    context['votes'] = int(info[5])
-    context['costfortwo'] = info[6]
-    if context['costfortwo'] is None:
-        context['costfortwo'] = 'Unknown'
-    else:
-        context['costfortwo'] = 'Rs. '+str(context['costfortwo'])+' for two people (approx.)'
-    context['locationid'] = info[1]
-    if context['locationid'] is None:
-        context['location'] = 'Unknown'
-    else:
-        q2 = """SELECT * FROM locationref WHERE locationid = %s"""
-        t2 = (context['locationid'],)
-        cur.execute(q2,t2)
-        context['location'] = cur.fetchall()[0][1]
-    context['listedid'] = info[2]
-    q2 = """SELECT * FROM listedref WHERE listedid = %s"""
-    t2 = (context['listedid'],)
-    cur.execute(q2,t2)
-    context['listed'] = cur.fetchall()[0][1]
-    q2 = """SELECT name FROM (SELECT * FROM types WHERE restaurantid = %s) as temp, typesref where temp.typeid=typesref.typeid"""
-    t2 = (session['restid'],)
-    cur.execute(q2,t2)
-    context['types'] = ''
-    for x in cur.fetchall():
-        context['types'] += x[0]+', '
-    if len(context['types']) > 0:
-        context['types'] = context['types'][:-2]
-    else:
-        context['types'] = 'Unknown'
-    q2 = """SELECT name FROM (SELECT * FROM cuisines WHERE restaurantid = %s) as temp, cuisinesref where temp.cuisineid=cuisinesref.cuisineid"""
-    t2 = (session['restid'],)
-    cur.execute(q2,t2)
-    context['cuisines'] = ''
-    for x in cur.fetchall():
-        context['cuisines'] += x[0]+', '
-    if len(context['cuisines']) > 0:
-        context['cuisines'] = context['cuisines'][:-2]
-    else:
-        context['cuisines'] = 'Unknown'
-    q2 = """SELECT name FROM (SELECT * FROM liked WHERE restaurantid = %s) as temp, likedref where temp.likedid=likedref.likedid"""
-    t2 = (session['restid'],)
-    cur.execute(q2,t2)
-    context['liked'] = ''
-    for x in cur.fetchall():
-        context['liked'] += x[0]+', '
-    if len(context['liked']) > 0:
-        context['liked'] = context['liked'][:-2]
-    else:
-        context['liked'] = 'Unknown'
-    q2 = """SELECT phone FROM phones WHERE restaurantid = %s"""
-    t2 = (session['restid'],)
-    cur.execute(q2,t2)
-    context['phones'] = ''
-    for x in cur.fetchall():
-        context['phones'] += x[0]+', '
-    if len(context['phones']) > 0:
-        context['phones'] = context['phones'][:-2]
-    else:
-        context['phones'] = 'Unknown'
-    q2 = """SELECT userid, rating, review FROM reviews WHERE restaurantid = %s order by rating desc"""
-    t2 = (session['restid'],)
-    cur.execute(q2,t2)
-    context['reviews'] = [[x[0], x[1], x[2]] for x in cur.fetchall()]
-    for i in range(len(context['reviews'])):
-        if context['reviews'][i][1] is not None:
-            context['reviews'][i][1] = str(context['reviews'][i][1])+'/5'
-        else:
-            context['reviews'][i][1] = 'N.A.'
-        user = context['reviews'][i][0]
-        if user is None:
-            user = 'Anonymous'
-        else:
-            user = int(user)
-            q2 = """SELECT username FROM user_login WHERE userid = %s limit 1"""
-            t2 = (user,)
-            cur.execute(q2,t2)
-            user = cur.fetchall()[0][0]
-        context['reviews'][i][0] = user
+    context=get_restaurant_info(session['restid'])
     return render_template('restprofile.html', context=context)
+
+@app.route('/restdisplay', methods=['GET'])
+def restdisplay():
+    if session.get('userid') <= 0:
+        return redirect(url_for('home'))
+    if 'restid' not in request.args:
+        return redirect(url_for('profile'))
+    restid = request.args['restid']
+    if restid.isnumeric():
+        restid=int(restid)
+    if restid < 0:
+        return redirect(url_for('profile'))
+    context=get_restaurant_info(int(request.args['restid']))
+    if context == -1:
+        return redirect(url_for('profile'))
+    return render_template('restdisplay.html', context=context)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

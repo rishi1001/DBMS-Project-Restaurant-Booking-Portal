@@ -1,0 +1,55 @@
+{% extends 'base2.html' %}
+{% block content %}
+<br><div class="text-center"><h2 style="color:blue;"><a href={{context.url}} class="card-link">{{context.name}}</a></h2>
+<form class="justify-content-center" method="GET" action="{{url_for('booking')}}">
+    <div class="card-body">
+        <input type="hidden" name="restid" value= "{{context.id}}" id= "type_" />          
+        <button type="submit" name="booking_restaurant" value={{context.id}} class="btn btn-danger btn-small" method="GET">Book Now</button>
+	</div>
+</form>
+</div><br>
+<nav>
+  <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
+	<button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Information</button>
+	<button class="nav-link" id="nav-reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="nav-reviews" aria-selected="false">Reviews</button>
+	<button class="nav-link" id="nav-history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="nav-history" aria-selected="false">Previous Bookings</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+	<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="nav-info-tab">
+		<div class="text-center">Cuisines: {{context.cuisines}}</div>
+		<div class="text-center">Location: {{context.location}}</div>
+		<div class="text-center"><h5 style="color:green;">Rated {{context.rating}} by {{context.votes}} people</h5></div>
+		<h4>Listed as</h4>
+		{{context.listed}}<br><br>
+		<h4>Type of Place</h4>
+		{{context.types}}<br><br>
+		<h4>Dishes liked by people</h4>
+		{{context.liked}}<br><br>
+		<h4>Average Cost</h4>
+		{{context.costfortwo}}<br><br>
+		<h4>Online Order</h4>
+		{{context.onlineorder}}<br><br>
+		<h4>Call</h4>
+		{{context.phones}}<br><br>
+		<h4>Address</h4>
+		{{context.address}}<br><br>
+	</div>
+	<div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="nav-reviews-tab">
+		{%for review in context.reviews%}
+		<div class="card">
+			<div class="card-body">
+				<div class="text-center">
+					User: {{review.0}}
+					<h6 style="color:green;">Rated {{review.1}}</h6>
+					{{review.2}}
+				</div>
+			</div>
+		</div>
+		{%endfor%}
+	</div>
+	<div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="nav-history-tab">
+		previous bookings
+	</div>
+</div>
+{% endblock %}

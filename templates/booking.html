@@ -1,9 +1,9 @@
 {% extends 'base2.html' %}
 {% block content %}
-<br><br>
 <div class="container">
     <div class="col-lg-4 mx-auto text-center form p-4">
         <div class="px-2">
+            <div class="text-center"><h2 style="color:blue;">{{context.name}}</h2><br>
             <div class="text-center"><h3>Book Your Table</h3></div><br>
             <form class="justify-content-center" method="POST">
                 <div class="form-group">
@@ -20,6 +20,7 @@
                     <input type="time" class="form-control" id="time" name="time" aria-describedby="time" placeholder="Enter Time" required>
                 </div>
                 <br>
+                <input type="hidden" name="restid" value= "{{context.id}}" id= "type_" />
                 <button type="submit" class="btn btn-danger btn-lg">Book!</button>
                 <br>
             </form>

@@ -83,14 +83,13 @@
 Here are your faviourite Restaurants:
 {% for restaurant in restaurants %}
 <div class="card" style="width: 18rem;">
-    <form class="justify-content-center" method="POST">
+    <form class="justify-content-center" method="GET" action="{{url_for('booking')}}">
         <div class="card-body">
-            <h5 class="card-title">{{restaurant[0]}}</h5>
+            <h5 class="card-title"><a href="{{url_for('restdisplay')}}?restid={{restaurant[2]}}" class="card-link">{{restaurant[0]}}</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href={{restaurant[1]}} class="card-link">Link to Restaurant Page</a>
-            <input type="hidden" name="type_" value= "1" id= "type_" />          
-            <button type="submit" name="booking_restaurant" value={{restaurant[2]}} class="btn btn-danger btn-small" method="POST">Book Now</button>
+            <input type="hidden" name="restid" value= "{{restaurant[2]}}" id= "type_" />          
+            <button type="submit" name="booking_restaurant" value={{restaurant[2]}} class="btn btn-danger btn-small" method="GET">Book Now</button>
           </div>
     </form>
   </div>
