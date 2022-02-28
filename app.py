@@ -550,6 +550,12 @@ def restdisplay():
         context['userrating'] = int(x[0][3])
         context['review'] = x[0][4]
         context['reviewid'] = x[0][1]
+    # add Previous bookings (show all states)
+    q4 = """SELECT person,date,time,status FROM bookings where restaurantid =%s order by date asc, time asc"""
+    # Showing accepted bookings first
+    t4 = (restid,)
+    cur.execute(q4,t4)
+    context['previous_bookings'] = [[x[0],x[1],x[2],x[3]] for x in cur.fetchall()]
     return render_template('restdisplay.html', context=context)
 
 @app.route('/register', methods=['GET', 'POST'])

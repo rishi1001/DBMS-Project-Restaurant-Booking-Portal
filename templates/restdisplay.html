@@ -50,7 +50,22 @@
 		{%endfor%}
 	</div>
 	<div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="nav-history-tab">
-		previous bookings
+		{% for b in context.previous_bookings%}
+		<div class = "card">
+			<div class = "text-center">
+				<br>
+				<h6 style="color:green;">Persons: <span style="color:black;">{{b.0}}</span></h6>
+				<h6 style="color:green;">Date: <span style="color:black;">{{b.1}}</span></h6>
+				<h6 style="color:green;">Time: <span style="color:black;">{{b.2}}</span></h6>
+				<h6 style="color:green;">Status:
+					{%if b.3 == 'ACCEPTED'%}<span style="color:green;">{%endif%}
+					{%if b.3 == 'COMPLETED'%}<span style="color:yellow;">{%endif%}
+					{%if b.3 == 'REJECTED'%}<span style="color:red;">{%endif%}
+					{%if b.3 == 'PENDING'%}<span style="color:orange;">{%endif%}
+					{{b.3}}</span></h6>
+			</div>
+		</div>
+		{% endfor %}
 	</div>
 	<div class="tab-pane fade" id="write" role="tabpanel" aria-labelledby="nav-write-tab">
 		<form method="POST" action="{{url_for('restdisplay')}}">

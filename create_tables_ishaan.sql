@@ -133,9 +133,9 @@ CREATE table if NOT EXISTS bookings(
 
 \copy restaurants from '/Users/ishaansingh/Desktop/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
-Update restaurants set locationid = NULL where locationid = -1;
-Update restaurants set costfortwo = NULL where costfortwo = -1;
-Update restaurants set rating = NULL where rating = -1;
+Update restaurants set locationid = NULL where locationid < 0;
+Update restaurants set costfortwo = NULL where costfortwo < 0;
+Update restaurants set rating = NULL where rating < 0;
 
 
 alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locationid) REFERENCES locationref(locationid);
@@ -155,13 +155,13 @@ alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locatio
 
 \copy reviews from '/Users/ishaansingh/Desktop/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
 
-Update reviews set userid = NULL where userid = -1;
+Update reviews set userid = NULL where userid < 0;
 
 alter table reviews add CONSTRAINT user_foreign_key FOREIGN KEY (userid) REFERENCES user_login(userid);
 
 -- to restaurant_login, add entries restaurantid, username as restaurant name 
-INSERT INTO restaurant_login(restaurantid,username) SELECT restaurantid,name FROM restaurants;
-
-UPDATE restaurant_login SET password = '$2b$12$at.aLAFoqlwUdFYRQfSp/ueX6qRJjX2JFoAZmsrA7sGztz4RPCuBG';
+-- INSERT INTO restaurant_login(restaurantid,username) SELECT restaurantid,name FROM restaurants;
+\copy restaurant_login from '/Users/ishaansingh/Desktop/DBMS-Project/Data/restaurant_login.csv' delimiter ',' csv header encoding 'win1250';
+-- UPDATE restaurant_login SET password = '$2b$12$at.aLAFoqlwUdFYRQfSp/ueX6qRJjX2JFoAZmsrA7sGztz4RPCuBG';
 
 alter table restaurants add CONSTRAINT restaurant_foreign_key FOREIGN KEY (restaurantid) REFERENCES restaurant_login(restaurantid);
