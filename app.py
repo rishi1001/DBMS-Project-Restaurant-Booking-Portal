@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "")
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "himthebiscuit")
     conn.autocommit = True
     return conn
 
@@ -481,7 +481,16 @@ def restprofile():
 def current_bookings():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
-    return render_template('current_bookings.html')
+    # Show all bookings of users in context
+    q = """SELECT bookingid,restaurant_login.username,person,date,time,status FROM bookings,restaurant_login where userid =%s and restaurant_login.restaurantid = bookings.restaurantid  order by date asc, time asc"""
+    # Showing accepted bookings first
+    conn = get_db_connection()
+    cur = conn.cursor()
+    t = (session.get('userid'),)
+    cur.execute(q,t)
+    context = {}
+    context['current_bookings'] = [[x[0],x[1],x[2],x[3],x[4],x[5]] for x in cur.fetchall()]
+    return render_template('current_bookings.html',context = context)
 
 @app.route('/restdisplay', methods=['GET', 'POST'])
 def restdisplay():

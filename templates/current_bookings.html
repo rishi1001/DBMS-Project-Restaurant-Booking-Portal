@@ -1,4 +1,21 @@
 {% extends 'base2.html' %}
 {% block content %}
-
+{% for b in context.current_bookings%}
+		<div class = "card">
+			<div class = "text-center">
+				<br>
+				<h6 style="color:green;">Booking ID: <span style="color:black;">{{b.0}}</span></h6>
+				<h6 style="color:green;">Restaurant: <span style="color:black;">{{b.1}}</span></h6>
+				<h6 style="color:green;">Person: <span style="color:black;">{{b.2}}</span></h6>
+				<h6 style="color:green;">Date: <span style="color:black;">{{b.3}}</span></h6>
+				<h6 style="color:green;">Time: <span style="color:black;">{{b.4}}</span></h6>
+				<h6 style="color:green;">Status:
+					{%if b.5 == 'ACCEPTED'%}<span style="color:green;">{%endif%}
+					{%if b.5 == 'COMPLETED'%}<span style="color:yellow;">{%endif%}
+					{%if b.5 == 'REJECTED'%}<span style="color:red;">{%endif%}
+					{%if b.5 == 'PENDING'%}<span style="color:orange;">{%endif%}
+					{{b.5}}</span></h6>
+			</div>
+		</div>
+		{% endfor %}
 {% endblock %}
