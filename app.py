@@ -96,6 +96,11 @@ def get_restaurant_info(restid, short=0):
         context['cuisines'] = context['cuisines'][:-2]
     else:
         context['cuisines'] = 'Unknown'
+    q2 = """SELECT username FROM restaurant_login where restaurantid=%s"""
+    t2 = (restid,)
+    cur.execute(q2,t2)
+    context['username'] = cur.fetchall()[0][0]
+    print(context['username'])
     if short == 1:
         return context
     q2 = """SELECT name FROM (SELECT * FROM liked WHERE restaurantid = %s) as temp, likedref where temp.likedid=likedref.likedid"""
@@ -471,6 +476,12 @@ def restprofile():
             disp_state = ['','show active','','']
 
     return render_template('restprofile.html', context=context, tab_state = tab_state, disp_state = disp_state)
+
+@app.route('/current_bookings')
+def current_bookings():
+    if session.get('userid') <= 0:
+        return redirect(url_for('home'))
+    return render_template('current_bookings.html')
 
 @app.route('/restdisplay', methods=['GET', 'POST'])
 def restdisplay():
