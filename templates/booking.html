@@ -20,8 +20,21 @@
                     <input type="time" class="form-control" id="time" name="time" aria-describedby="time" placeholder="Enter Time" required>
                 </div>
                 <br>
-                <input type="hidden" name="restid" value= "{{context.id}}" id= "type_" />
+                <input type="hidden" name="type_" value= "{{context.id}}" id= "type_" />
                 <button type="submit" class="btn btn-danger btn-lg">Book!</button>
+                <br>
+                <br>
+                {%if sess.booking_confirmed == 1%}
+                        <h6 style="color:green;">Booking sent, Pending approval. Your booking ID is {{bid.bid}}</h6>
+                {%endif%}
+                {%if sess.booking_err == 1%}
+                        <h6 style="color:red;">Booking already exists ! You already have a booking with ID {{bid.bid}} on this day at {{context.name}}</h6>
+                {%endif%}
+            </form>
+            <form>
+                <br>
+                <input type="hidden" name="type_" value= "bth" id= "type_" />
+                <button type="submit" class="btn btn-danger btn-lg">Back to Home</button>
                 <br>
             </form>
         </div>

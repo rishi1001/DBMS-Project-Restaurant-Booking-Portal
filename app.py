@@ -33,7 +33,8 @@ def reset_errors():
     session['cuisine_selected']=-1
     session['rating_selected']=-1
     session['cost_selected']=-1
-
+    session['booking_confirmed']=0
+    session['booking_err']=0
 
 def get_restaurant_info(restid, short=0):
     conn = get_db_connection()
@@ -136,6 +137,17 @@ def get_restaurant_info(restid, short=0):
             cur.execute(q2,t2)
             user = cur.fetchall()[0][0]
         context['reviews'][i][0] = user
+
+    q3 = """SELECT username,person,date,time,bookingid FROM bookings,user_login where bookings.userid = user_login.userid and restaurantid =%s and status = 'PENDING' order by date asc, time asc"""
+    # A join required
+    t3 = (restid,)
+    cur.execute(q3,t3)
+    context['bookings'] = [[x[0],x[1],x[2],x[3],x[4]] for x in cur.fetchall()]
+    q4 = """SELECT username,person,date,time,bookingid,status FROM bookings,user_login where bookings.userid = user_login.userid and restaurantid =%s and (status = 'COMPLETED' or status = 'ACCEPTED') order by status asc, date asc, time asc"""
+    # Showing accepted bookings first
+    t4 = (restid,)
+    cur.execute(q4,t4)
+    context['booking_history'] = [[x[0],x[1],x[2],x[3],x[4],x[5]] for x in cur.fetchall()]
     return context
 
 @app.before_request
@@ -297,25 +309,57 @@ def booking():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
     # print(request.form)
+    bid = {}
+    bid['bid'] = -1
+    session['booking_confirmed']=0
+    session['booking_err'] = 0
     if request.method == 'POST':
-        persons = request.form['tot_person']
-        date = request.form['date']                
-        time = request.form['time']
-        restid = request.form['restid']
-        if restid.isnumeric():
-            restid=int(restid)
-        if restid < 0:
+
+        if request.form['type_'] == 'bth':
+
+            session['booking_confirmed']=0
             return redirect(url_for('profile'))
-        # what to do after booked ? checkout or backat profile page?
-        # get restid from booked res id(on clicking book now)
-        t1 = (1,session.get('userid'),restid,persons,date,time)      # how to generate booking id? (currently set as 1)
-        q1 = """INSERT INTO bookings VALUES (%s,%s,%s,%s,%s,%s)"""
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute(q1,t1)
-        conn.commit()
-        print(persons,date,time)
-    print(request.args)
+
+        else:
+            # For a fixed day, restaurantid, atmost one PENDING/APPROVED booking
+            # Add option to cancel a booking as well
+            # Add option to check booking status as well (will be done through tabs)
+            persons = request.form['tot_person']
+            date = request.form['date']                
+            time = request.form['time']
+            restid = request.form['type_']
+            if restid.isnumeric():
+                restid=int(restid)
+            if restid < 0:
+                return redirect(url_for('profile'))
+
+            conn = get_db_connection()
+            cur = conn.cursor()
+
+            q1 = """SELECT bookingid FROM bookings WHERE userid = %s and restaurantid = %s and date = %s and (status = 'PENDING' or status = 'APPROVED')"""
+            t1 = (session.get('userid'),restid,date)
+            cur.execute(q1,t1)
+            res = cur.fetchall()
+            if (len(res) == 0):
+                cur.execute("""SELECT bookingid FROM bookings ORDER BY bookingid DESC LIMIT 1""")
+                last_id = cur.fetchall()
+
+                if (len(last_id) == 0): # This is the first booking so far
+                    bookingid = 1
+                else:
+                    bookingid = int(last_id[0][0])+1
+
+                t1 = (bookingid,session.get('userid'),restid,persons,date,time)      # how to generate booking id? (currently set as 1)
+                q1 = """INSERT INTO bookings VALUES (%s,%s,%s,%s,%s,%s,'PENDING')""" # Pending status
+                cur.execute(q1,t1)
+                conn.commit()
+                # Now print booking confirmed, set a flag of session
+                bid['bid'] = bookingid
+                session['booking_confirmed'] = 1
+            else:
+                bid['bid'] = int(res[0][0])
+                session['booking_err'] = 1
+
     if 'restid' not in request.args:
         return redirect(url_for('profile'))
     restid = request.args['restid']
@@ -326,7 +370,7 @@ def booking():
     context=get_restaurant_info(int(request.args['restid']), 1)
     if context == -1:
         return redirect(url_for('profile'))
-    return render_template('booking.html', context=context)
+    return render_template('booking.html', context=context, sess = session, bid = bid )
 
 @app.route('/edit_profile_rest',methods =['GET','POST'])
 def edit_profile_rest():
@@ -398,7 +442,35 @@ def restprofile():
     if session.get('restid') <= 0:
         return redirect(url_for('home'))
     context=get_restaurant_info(session['restid'])
-    return render_template('restprofile.html', context=context)
+    tab_state = ['active','','','']
+    disp_state = ['show active','','','']
+    if request.method == 'POST':
+        val = request.form['type_']
+        bookingid = int(val[1:])
+        if (val[0] == 'a'):
+            # accept the booking and change the status to accepted
+            q1 = """UPDATE bookings SET status = 'ACCEPTED' WHERE bookingid = %s"""
+            t1 = (bookingid,)
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            context=get_restaurant_info(session['restid']) # New context
+            tab_state = ['','active','','']
+            disp_state = ['','show active','','']
+        else:
+            # reject the booking and change the status to rejected
+            q1 = """UPDATE bookings SET status = 'REJECTED' WHERE bookingid = %s"""
+            t1 = (bookingid,)
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute(q1,t1)
+            conn.commit()
+            context=get_restaurant_info(session['restid']) # New context
+            tab_state = ['','active','','']
+            disp_state = ['','show active','','']
+
+    return render_template('restprofile.html', context=context, tab_state = tab_state, disp_state = disp_state)
 
 @app.route('/restdisplay', methods=['GET', 'POST'])
 def restdisplay():
