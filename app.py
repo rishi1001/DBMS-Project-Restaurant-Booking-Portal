@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'col362project'
 
 def get_db_connection():
-    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "himthebiscuit")
+    conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "")
     conn.autocommit = True
     return conn
 
@@ -482,14 +482,14 @@ def current_bookings():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
     # Show all bookings of users in context
-    q = """SELECT bookingid,restaurants.name,person,date,time,status FROM bookings,restaurants where userid =%s and restaurants.restaurantid = bookings.restaurantid  order by date asc, time asc"""
+    q = """SELECT bookingid,restaurants.name,person,date,time,status,restaurants.restaurantid FROM bookings,restaurants where userid =%s and restaurants.restaurantid = bookings.restaurantid  order by date asc, time asc"""
     # Showing accepted bookings first
     conn = get_db_connection()
     cur = conn.cursor()
     t = (session.get('userid'),)
     cur.execute(q,t)
     context = {}
-    context['current_bookings'] = [[x[0],x[1],x[2],x[3],x[4],x[5]] for x in cur.fetchall()]
+    context['current_bookings'] = [[x[0],x[1],x[2],x[3],x[4],x[5],x[6]] for x in cur.fetchall()]
     return render_template('current_bookings.html',context = context)
 
 @app.route('/restdisplay', methods=['GET', 'POST'])
