@@ -4,6 +4,10 @@
 <div class="container">
     <form class="justify-content-center" method="POST">
         <div class="form-group">
+            <label for="RestName">Restaurant Name </label>
+            <input type="restname" class="form-control" id="restname" name="restname" aria-describedby="usernamelHelp" placeholder="Name of Restaurant(prefix works)">
+        </div>
+        <div class="form-group">
             <label for="exampleCost">Cost for Two</label>
             <select name="cost" id = "cost" placeholder = "Select Cost">
                 {%if sess.cost_selected == 0 %}
