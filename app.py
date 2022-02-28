@@ -9,6 +9,7 @@ app.secret_key = 'col362project'
 
 def get_db_connection():
     conn = psycopg2.connect(host = "localhost", database = "col362project", user = "postgres", password = "")
+    conn.autocommit = True
     return conn
 
 def reset_errors():
@@ -49,7 +50,7 @@ def get_restaurant_info(restid, short=0):
     context['name'] = info[7]
     context['url'] = info[8]
     context['address'] = info[9]
-    context['rating'] = info[4]
+    context['rating'] = round(info[4], 1)
     context['onlineorder'] = info[3]
     if context['rating'] is None:
         context['rating'] = 'Not yet rated'
@@ -399,10 +400,60 @@ def restprofile():
     context=get_restaurant_info(session['restid'])
     return render_template('restprofile.html', context=context)
 
-@app.route('/restdisplay', methods=['GET'])
+@app.route('/restdisplay', methods=['GET', 'POST'])
 def restdisplay():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
+    if request.method == 'POST':
+        rating = float(request.form['rating'])
+        review = request.form['review']
+        restid = int(request.form['restid'])
+        conn = get_db_connection()
+        cur = conn.cursor()
+        q = """SELECT reviewid, rating FROM reviews WHERE restaurantid = %s and userid = %s limit 1"""
+        t = (restid, session['userid'])
+        cur.execute(q, t)
+        x = cur.fetchall()
+        if len(x) == 0:
+            cur.execute("SELECT reviewid FROM reviews ORDER BY reviewid DESC limit 1")
+            x = cur.fetchall()[0][0]
+            q = """INSERT INTO reviews VALUES(%s, %s, %s, %s, %s);"""
+            t = (restid, x+1, session['userid'], rating, review)
+            cur.execute(q, t)
+            q = """SELECT * from restaurants where restaurantid=%s limit 1"""
+            t = (restid,)
+            cur.execute(q, t)
+            x = cur.fetchall()[0]
+            rating_ = x[4]
+            votes = x[5]
+            if rating_ is None:
+                rating_ = 0
+            rating_ = (rating_*votes+rating)/(votes+1)
+            q = """UPDATE restaurants set rating=%s, votes=%s where restaurantid=%s"""
+            t = (rating_, votes+1, restid)
+            cur.execute(q, t)
+        else:
+            reviewid = x[0][0]
+            old_rating = x[0][1]
+            print(old_rating)
+            q = """UPDATE reviews SET rating=%s, review=%s WHERE reviewid=%s;"""
+            t = (rating, review, reviewid)
+            cur.execute(q, t)
+            q = """SELECT * from restaurants where restaurantid=%s limit 1"""
+            t = (restid,)
+            cur.execute(q, t)
+            x = cur.fetchall()[0]
+            rating_ = x[4]
+            votes = x[5]
+            if rating_ is None:
+                rating_ = 0
+            if old_rating is None:
+                old_rating = 0
+            rating_ = (rating_*votes-old_rating+rating)/votes
+            q = """UPDATE restaurants set rating=%s, votes=%s where restaurantid=%s"""
+            t = (rating_, votes, restid)
+            cur.execute(q, t)
+        return redirect(url_for('restdisplay')+'?restid='+str(restid))
     if 'restid' not in request.args:
         return redirect(url_for('profile'))
     restid = request.args['restid']
@@ -413,6 +464,20 @@ def restdisplay():
     context=get_restaurant_info(int(request.args['restid']))
     if context == -1:
         return redirect(url_for('profile'))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    q = """SELECT * FROM reviews WHERE restaurantid = %s and userid = %s limit 1"""
+    t = (restid, session['userid'])
+    cur.execute(q, t)
+    x = cur.fetchall()
+    if len(x) == 0:
+        context['userrating'] = -1
+        context['review'] = ''
+        context['reviewid'] = -1
+    else:
+        context['userrating'] = int(x[0][3])
+        context['review'] = x[0][4]
+        context['reviewid'] = x[0][1]
     return render_template('restdisplay.html', context=context)
 
 @app.route('/register', methods=['GET', 'POST'])

@@ -2,9 +2,9 @@
 {% block content %}
 <br><div class="text-center"><h2 style="color:blue;"><a href={{context.url}} class="card-link">{{context.name}}</a></h2>
 <form class="justify-content-center" method="GET" action="{{url_for('booking')}}">
-    <div class="card-body">
-        <input type="hidden" name="restid" value= "{{context.id}}" id= "type_" />          
-        <button type="submit" name="booking_restaurant" value={{context.id}} class="btn btn-danger btn-small" method="GET">Book Now</button>
+	<div class="card-body">
+		<input type="hidden" name="restid" value= "{{context.id}}" id= "type_" />          
+		<button type="submit" name="booking_restaurant" value={{context.id}} class="btn btn-danger btn-small" method="GET">Book Now</button>
 	</div>
 </form>
 </div><br>
@@ -13,6 +13,7 @@
 	<button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Information</button>
 	<button class="nav-link" id="nav-reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="nav-reviews" aria-selected="false">Reviews</button>
 	<button class="nav-link" id="nav-history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="nav-history" aria-selected="false">Previous Bookings</button>
+	<button class="nav-link" id="nav-write-tab" data-bs-toggle="tab" data-bs-target="#write" type="button" role="tab" aria-controls="nav-write" aria-selected="false">Write a Review</button>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -50,6 +51,48 @@
 	</div>
 	<div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="nav-history-tab">
 		previous bookings
+	</div>
+	<div class="tab-pane fade" id="write" role="tabpanel" aria-labelledby="nav-write-tab">
+		<form method="POST" action="{{url_for('restdisplay')}}">
+			<br>
+		  	<div class="form-group">
+				<label for="exampleCategory">Rating (Out of 5)</label>
+				<select name="rating" id = "rating" placeholder = "Select Rating">
+					{%if context.userrating == 1%}
+						<option value = '1' selected> 1 </option>
+					{%else%}
+						<option value = '1'> 1 </option>
+					{%endif%}
+					{%if context.userrating == 2%}
+						<option value = '2' selected> 2 </option>
+					{%else%}
+						<option value = '2'> 2 </option>
+					{%endif%}
+					{%if context.userrating == 3%}
+						<option value = '3' selected> 3 </option>
+					{%else%}
+						<option value = '3'> 3 </option>
+					{%endif%}
+					{%if context.userrating == 4%}
+						<option value = '4' selected> 4 </option>
+					{%else%}
+						<option value = '4'> 4 </option>
+					{%endif%}
+					{%if context.userrating == 5%}
+						<option value = '5' selected> 5 </option>
+					{%else%}
+						<option value = '5'> 5 </option>
+					{%endif%}
+				</select>
+			</div>
+			<br>
+		  	<div class="form-group">
+				<label for="exampleFormControlTextarea1">Review</label><br>
+				<textarea class="form-control" id="review" name="review" rows="5">{{context.review}}</textarea>
+		  	</div><br>
+		  	<input type="hidden" name="restid" value= "{{context.id}}" id= "type_" />
+		  	<button type="submit" class="btn btn-primary btn-small" method="POST">Save</button>
+		</form>
 	</div>
 </div>
 {% endblock %}
