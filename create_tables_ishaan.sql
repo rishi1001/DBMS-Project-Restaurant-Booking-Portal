@@ -125,13 +125,13 @@ CREATE table if NOT EXISTS bookings(
     CONSTRAINT booking_foreign_key2 FOREIGN KEY (restaurantid) REFERENCES restaurants(restaurantid)
 );
 
-\copy cuisinesref from '/Users/karan/COL362/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisinesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisinesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy listedref from '/Users/karan/COL362/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy listedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/listedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy locationref from '/Users/karan/COL362/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
+\copy locationref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/locationref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy restaurants from '/Users/karan/COL362/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
+\copy restaurants from '/Users/ishaansingh/Desktop/DBMS-Project/Data/restaurants.csv' delimiter ',' csv header encoding 'win1250';
 
 Update restaurants set locationid = NULL where locationid = -1;
 Update restaurants set costfortwo = NULL where costfortwo = -1;
@@ -141,19 +141,19 @@ Update restaurants set rating = NULL where rating = -1;
 alter table restaurants add CONSTRAINT location_foreign_key FOREIGN KEY (locationid) REFERENCES locationref(locationid);
 
 
-\copy cuisines from '/Users/karan/COL362/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
+\copy cuisines from '/Users/ishaansingh/Desktop/DBMS-Project/Data/cuisines.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy likedref from '/Users/karan/COL362/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
+\copy likedref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/likedref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy liked from '/Users/karan/COL362/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
+\copy liked from '/Users/ishaansingh/Desktop/DBMS-Project/Data/liked.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy phones from '/Users/karan/COL362/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
+\copy phones from '/Users/ishaansingh/Desktop/DBMS-Project/Data/phones.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy typesref from '/Users/karan/COL362/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
+\copy typesref from '/Users/ishaansingh/Desktop/DBMS-Project/Data/typesref.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy types from '/Users/karan/COL362/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
+\copy types from '/Users/ishaansingh/Desktop/DBMS-Project/Data/types.csv' delimiter ',' csv header encoding 'win1250';
 
-\copy reviews from '/Users/karan/COL362/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
+\copy reviews from '/Users/ishaansingh/Desktop/DBMS-Project/Data/reviews.csv' delimiter ',' csv header encoding 'win1250';
 
 Update reviews set userid = NULL where userid = -1;
 
