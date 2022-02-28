@@ -482,7 +482,7 @@ def current_bookings():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
     # Show all bookings of users in context
-    q = """SELECT bookingid,restaurant_login.username,person,date,time,status FROM bookings,restaurant_login where userid =%s and restaurant_login.restaurantid = bookings.restaurantid  order by date asc, time asc"""
+    q = """SELECT bookingid,restaurants.name,person,date,time,status FROM bookings,restaurants where userid =%s and restaurants.restaurantid = bookings.restaurantid  order by date asc, time asc"""
     # Showing accepted bookings first
     conn = get_db_connection()
     cur = conn.cursor()
