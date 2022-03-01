@@ -23,9 +23,16 @@ drop index if exists index4;
 drop index if exists index5;
 drop index if exists index6;
 drop index if exists index7;
+drop index if exists index8;
+drop index if exists index9;
+drop index if exists index10;
+drop index if exists index11;
+drop index if exists index12;
+
 drop materialized view if exists popular;
 drop PROCEDURE if exists refresh_popular;
 drop trigger if exists trigger_popular on restaurants;
+drop trigger if exists trigger_popular2 on restaurants;
 
 CREATE table IF NOT EXISTS cuisinesref(
     cuisineid bigint,
@@ -191,6 +198,11 @@ create index index4 on bookings(userid);
 create index index5 on bookings(restaurantid);
 create index index6 on bookings(date);
 create index index7 on reviews(userid);
+create index index8 on cuisines(cuisineid);
+create index index9 on cuisines(restaurantid);
+create index index10 on liked(restaurantid);
+create index index11 on phones(restaurantid);
+create index index12 on types(restaurantid);
 
 create materialized view popular as select restaurantid,locationid,listedid,onlineorder,costfortwo,restaurants.name,url,address from restaurants, (select name, max(votes) from restaurants group by name order by max desc) as temp where restaurants.name=temp.name and restaurants.votes=max order by max desc limit 100;
 
@@ -204,3 +216,7 @@ END;
 $$;
 
 CREATE TRIGGER trigger_popular AFTER INSERT ON restaurants EXECUTE PROCEDURE refresh_popular();
+CREATE TRIGGER trigger_popular2 AFTER UPDATE ON restaurants
+for each row
+WHEN (OLD.costfortwo IS DISTINCT FROM NEW.costfortwo)
+EXECUTE PROCEDURE refresh_popular();
