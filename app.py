@@ -271,17 +271,21 @@ def home():
 def profile():
     if session.get('userid') <= 0:
         return redirect(url_for('home'))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT username FROM user_login WHERE userid = %s",(session['userid'],))
+    userid=cur.fetchall()[0][0]
     if request.method == 'POST' and request.form['type_'] == '0':
         # how to know if user has actually selected it ?
         cost = int(request.form['cost'])
         if cost==0:
             costlow = 0
-            costhigh = 5000
+            costhigh = 1000
         elif cost==1:
-            costlow = 5000
-            costhigh = 10000
+            costlow = 1000
+            costhigh = 5000
         elif cost==2:
-            costlow = 10000
+            costlow = 5000
             costhigh = 999999999
         else:
             costlow = 0
@@ -290,8 +294,6 @@ def profile():
         cuisine = request.form['cuisine']
         rest_pre = request.form['restname']
         location = request.form['location']
-        conn = get_db_connection()
-        cur = conn.cursor()
         cur.execute("SELECT cuisineid FROM cuisinesref WHERE name = %s",(cuisine,))
         print(cuisine)
         if cuisine != 'All':
@@ -311,80 +313,112 @@ def profile():
         if location == 'All':
             if rating==5 and cuisine=='All':
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,listedref WHERE listedref.listedid = restuarants.listedid and costfortwo<%s and costfortwo>=%s limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE listedref.listedid = restaurants.listedid and restaurants.locationid=locationref.locationid and costfortwo<%s and costfortwo>=%s limit 100;"
                     cur.execute(q1,(costhigh,costlow)) 
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%')) 
             elif rating==5 and cuisine!='All':
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,cuisineid))
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%',cuisineid))
             elif rating!=5 and cuisine=='All':
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,listedref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rating+1,rating))
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and rating < %s and rating>=%s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and rating < %s and rating>=%s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%',rating+1,rating))
             else:
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rating+1,rating,cuisineid))
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and rating < %s and rating>=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%',rating+1,rating,cuisineid))
         else:
             if rating==5 and cuisine=='All':
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,listedref WHERE costfortwo<%s and costfortwo>=%s and locationid=%s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.locationid=%s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,locationid)) 
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and locationid=%s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and restaurants.locationid=%s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%',locationid))
             elif rating==5 and cuisine!='All':
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,locationid,cuisineid))
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and restaurants.locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%',locationid,cuisineid))
             elif rating!=5 and cuisine=='All':
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,listedref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and locationid=%s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.locationid=%s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rating+1,rating,locationid))
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and rating < %s and rating>=%s and locationid=%s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and rating < %s and rating>=%s and restaurants.locationid=%s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%',rating+1,rating,locationid))
             else:
                 if rest_pre=="":
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid  limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and rating < %s and rating>=%s and restaurants.locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rating+1,rating,locationid,cuisineid))
                 else:
-                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name FROM restaurants,cuisines,listedref WHERE costfortwo<%s and costfortwo>=%s and name like %s and rating < %s and rating>=%s and locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restuarants.listedid = listedref.listedid limit 10;"
+                    q1 = "SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,locationref.name,costfortwo FROM restaurants,cuisines,listedref,locationref WHERE costfortwo<%s and costfortwo>=%s and restaurants.name like %s and rating < %s and rating>=%s and restaurants.locationid=%s and restaurants.restaurantid = cuisines.restaurantid and cuisines.cuisineid = %s and restaurants.listedid = listedref.listedid and restaurants.locationid=locationref.locationid limit 100;"
                     cur.execute(q1,(costhigh,costlow,rest_pre+'%',rating+1,rating,locationid,cuisineid))
-
-
         restaurants = cur.fetchall()
+        restaurants = [[x[0], x[1], x[2], x[3], x[4], x[5], x[6]] for x in restaurants]
+        # print(restaurants)
+        for i in range(len(restaurants)):
+            if restaurants[i][6] is None:
+                restaurants[i][6] = 'Unknown'
+            else:
+                restaurants[i][6] = 'Rs. '+str(restaurants[i][6])+' for two people (approx.)'
+            q1 = "SELECT name FROM cuisines,cuisinesref WHERE restaurantid=%s and cuisines.cuisineid=cuisinesref.cuisineid;"
+            cur.execute(q1, (restaurants[i][2],))
+            restaurants[i].append('')
+            for x in cur.fetchall():
+                restaurants[i][7] += x[0]+', '
+            if len(restaurants[i][7]) > 0:
+                restaurants[i][7] = restaurants[i][7][:-2]
+            else:
+                restaurants[i][7] = 'Unknown'
         print(restaurants)
+
         cur.execute("SELECT name FROM cuisinesref ORDER BY name")
         cuisines = cur.fetchall()
         cur.execute("SELECT name FROM locationref ORDER BY name")
         location = cur.fetchall()
-        return render_template('profile.html', restaurants = restaurants, cuisines = cuisines, location=location, sess=session)
+        return render_template('profile.html', restaurants = restaurants, cuisines = cuisines, location=location, sess=session, search=1, userid=userid)
     # return render_template('profile.html')
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT popular.name,url,popular.restaurantid,address,listedref.name FROM popular,cuisines,listedref WHERE popular.restaurantid = cuisines.restaurantid and popular.listedid = listedref.listedid limit 100;")
+    cur.execute("SELECT popular.name,url,popular.restaurantid,address,listedref.name,locationref.name,costfortwo FROM popular,listedref,locationref WHERE popular.listedid = listedref.listedid and popular.locationid=locationref.locationid;")
+    # cur.execute("SELECT name,url,restaurantid,address FROM popular limit 100;")
     restaurants = cur.fetchall()
+    restaurants = [[x[0], x[1], x[2], x[3], x[4], x[5], x[6]] for x in restaurants]
+    for i in range(len(restaurants)):
+        if restaurants[i][6] is None:
+            restaurants[i][6] = 'Unknown'
+        else:
+            restaurants[i][6] = 'Rs. '+str(restaurants[i][6])+' for two people (approx.)'
+        q1 = "SELECT name FROM cuisines,cuisinesref WHERE restaurantid=%s and cuisines.cuisineid=cuisinesref.cuisineid;"
+        cur.execute(q1, (restaurants[i][2],))
+        restaurants[i].append('')
+        for x in cur.fetchall():
+            restaurants[i][7] += x[0]+', '
+        if len(restaurants[i][7]) > 0:
+            restaurants[i][7] = restaurants[i][7][:-2]
+        else:
+            restaurants[i][7] = 'Unknown'
+    print(restaurants)
     cur.execute("SELECT name FROM cuisinesref ORDER BY name")
     cuisines = cur.fetchall()
     cur.execute("SELECT name FROM locationref ORDER BY name")
     location = cur.fetchall()
-    return render_template('profile.html', restaurants = restaurants, cuisines = cuisines, location=location, sess=session)
+    return render_template('profile.html', restaurants = restaurants, cuisines = cuisines, location=location, sess=session, search = 0, userid=userid)
 
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():

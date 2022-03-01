@@ -1,6 +1,16 @@
 {% extends 'base2.html' %}
 {% block content %}
-<br><br>
+<style>
+    body{
+background-image:url('../static/pic6.jpg');
+background-repeat: no-repeat;
+height:100%;
+background-size:cover;
+}
+</style>
+<br>
+<div class="text-center" style="color:blue"><h1>Hi, {{userid}}!</h1></div>
+<div class="text-center" style="color:red"><h2>Search</h2></div><br>
 <div class="container">
     <form class="justify-content-center" method="POST">
         <div class="form row align-items-center">
@@ -10,7 +20,9 @@
                     <input type="restname" class="form-control" id="restname" name="restname" aria-describedby="usernamelHelp" placeholder="Name of Restaurant (prefix works) (Case sensitive)">
                 </div>
             </div>
-            <div class="col-auto">
+
+            <div class="col-auto justify-content-center">
+                <br>
                 <div class="form-group">
                     <label for="exampleCost">Cost for Two</label>
                     <select name="cost" id = "cost" placeholder = "Select Cost">
@@ -43,6 +55,7 @@
             </div>
             <br>
             <div class="col-auto">
+                <br>
                 <div class="form-group">
                     <label for="exampleRatingr">Rating</label>
                     <select name="rating" id = "rating" placeholder = "Select Rating">
@@ -98,6 +111,7 @@
                 </div>
             </div>
             <div class="col-auto">
+                <br>
                 <div class="form-group">
                     <label for="exampleCuisine">Cuisine</label>
                     <select name="cuisine" id = "cuisine" placeholder = "Select Cuisine">
@@ -113,6 +127,7 @@
                 </div>
             </div>
             <div class="col-auto">
+                <br>
                 <div class="form-group">
                     <label for="exampleLocation">Location</label>
                     <select name="location" id = "location" placeholder = "Select Location">
@@ -127,13 +142,22 @@
                     </select>
                 </div>
             </div>
+            <div class="col-auto">
+                <br>
+                <button type="submit" class="btn btn-danger btn-small">Submit</button>
+            </div>
         </div>
         <input type="hidden" name="type_" value= "0" id= "type_" />
-    <button type="submit" class="btn btn-success btn-small">Submit</button>
+    
     </form>
 </div>
-<br><br>
-Here are your faviourite Restaurants:
+<br>
+{%if search == 0%}
+<div style="color:blue"><h5>Here are some popular restaurants:</h5></div><br>
+{%endif%}
+{%if search == 1%}
+<div style="color:blue"><h5>Search Results:</h5></div><br>
+{%endif%}
 <!-- <div class='card-group'> -->
 <div class="row row-cols-1 row-cols-md-3">
     {% for restaurant in restaurants %}
@@ -142,9 +166,11 @@ Here are your faviourite Restaurants:
             <form class="justify-content-center" method="GET" action="{{url_for('booking')}}">
                 <div class="card-body">
                     <h5 class="card-title"><a href="{{url_for('restdisplay')}}?restid={{restaurant[2]}}" class="card-link">{{restaurant[0]}}</a></h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{restaurant[4]}}</h6>
-                    <p class="card-text">{{restaurant[3]}}</p>
-                    <input type="hidden" name="restid" value= "{{restaurant[2]}}" id= "type_" />          
+                    <h6 class="card-subtitle mb-2 text-muted"><div style="color:red">{{restaurant[5]}}</div></h6>
+                    <h6 class="card-subtitle mb-2">{{restaurant[7]}}</h6>
+                    <h6 class="card-subtitle mb-2"><div style="color:purple">{{restaurant[4]}}</div></h6>
+                    <p class="card-text">{{restaurant[6]}}</p>
+                    <input type="hidden" name="restid" value= "{{restaurant[2]}}" id= "type_" />
                     <button type="submit" name="booking_restaurant" value={{restaurant[2]}} class="btn btn-danger btn-small" method="GET">Book Now</button>
                 </div>
             </form>
