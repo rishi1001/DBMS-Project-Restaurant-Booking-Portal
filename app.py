@@ -102,7 +102,6 @@ def get_restaurant_info(restid, short=0):
     t2 = (restid,)
     cur.execute(q2,t2)
     context['username'] = cur.fetchall()[0][0]
-    print(context['username'])
     if short == 1:
         return context
     q2 = """SELECT name FROM (SELECT * FROM liked WHERE restaurantid = %s) as temp, likedref where temp.likedid=likedref.likedid"""
@@ -222,7 +221,7 @@ def login():
         session['userid'] = -1
         username=request.form['username2']
         password=request.form['password2']
-        if len(username) == 0 or len(username.replace(' ', '')) == 0 or not username.replace(' ', '').isalnum():
+        if len(username) == 0 or len(username.replace(' ', '')) == 0:
             session['error'] = 1
             session['login_rest_username_err'] = 1
             return redirect(url_for('login'))
@@ -563,22 +562,27 @@ def edit_profile_rest():
     if session.get('restid') <= 0:
         return redirect(url_for('home'))
     if request.method == 'POST':
-        print(request.form['type__'])
         if request.form['type__'] == '5':
             session['saved']=0
             return redirect(url_for('restprofile'))
         elif request.form['type__'] == '1':
             session['edit_phone_rest_saved'] =0
+            session['edit_phone_rest_err'] =0
             # Currently not handling error case here
             # Save the phone number for this restid
-            q1 = """UPDATE phones  SET phone = %s WHERE restaurantid = %s"""
-            t1 = (request.form['phonenum1'],session['restid'])
             conn = get_db_connection()
             cur = conn.cursor()
-            cur.execute(q1,t1)
-            conn.commit()
-            session['saved'] = 1
-            session['edit_phone_rest_saved'] =1
+            cur.execute("SELECT phone from phones where restaurantid=%s and phone=%s",(session['restid'],request.form['phonenum1']))
+            if len(cur.fetchall()) == 0:
+                q1 = """INSERT INTO phones values (%s, %s)"""
+                t1 = (session['restid'], request.form['phonenum1'])
+                cur.execute(q1,t1)
+                conn.commit()
+                session['saved'] = 1
+                session['edit_phone_rest_saved'] =1
+            else:
+                session['error'] = 1
+                session['edit_phone_rest_err'] = 1
 
         elif request.form['type__'] == '2':
             session['edit_URL_rest_saved'] =0
@@ -708,7 +712,6 @@ def restdisplay():
         else:
             reviewid = x[0][0]
             old_rating = x[0][1]
-            print(old_rating)
             q = """UPDATE reviews SET rating=%s, review=%s WHERE reviewid=%s;"""
             t = (rating, review, reviewid)
             cur.execute(q, t)
