@@ -144,6 +144,22 @@ background-size:cover;
             </div>
             <div class="col-auto">
                 <br>
+                <div class="form-group">
+                    <label for="examplecategory">Category</label>
+                    <select name="category" id = "category" placeholder = "Select Category">
+                        <option value = 'All' selected> All </option>
+                        {% for j in category %}
+                            {%if sess.category_selected == j[0] %}
+                            <option value = '{{j[0]}}' selected> {{j[0]}} </option>
+                            {%else%}
+                            <option value = '{{j[0]}}'> {{j[0]}} </option>
+                            {%endif%}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-auto">
+                <br>
                 <button type="submit" class="btn btn-danger btn-small">Submit</button>
             </div>
         </div>
