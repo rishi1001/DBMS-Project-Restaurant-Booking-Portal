@@ -4,3 +4,4 @@ Data/
 venv
 __pycache__
 test.py
+data_dump.sql
