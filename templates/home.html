@@ -8,11 +8,74 @@
 	{%endif%}
 {%endif%}
 {% block content %}
-<div class="text-center" style="color:brown;font-size:100px;">FoodBytes</div>
+<div class="text-center" style="color:red;font-size:70px;">Food<span style="color:cyan;font-size:70px;">Bytes</span></div>
 <style>
 	body{
-background-image:url('../static/hero-bg.jpg');
+background-image:url('../static/about.jpg');
+background-repeat: no-repeat;
+height:100%;
+background-size:cover;
 }
 </style>
-<p style="color:purple;text-align:center;font-size:20px;">The best interface to book a table</p>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-2"></div>
+		<div class="col-sm-2">
+			{%if sess.userid == -1 and sess.restid == -1%}
+				<form action="{{url_for('login')}}">
+					<button type="submit" class="btn btn-primary btn-md">Login</button>
+				</form>
+			{%endif%}
+		</div>
+		<div class="col-sm-4">
+			<div style="color:yellow;text-align:center;font-size:30px;">Discover the best places to eat!</div>
+		</div>
+		<div class="col-sm-1"></div>
+		<div class="col-sm-3">
+			{%if sess.userid == -1 and sess.restid == -1%}
+				<form action="{{url_for('register')}}">
+					<button type="submit" class="btn btn-primary btn-md">Register</button>
+				</form>
+			{%endif%}
+		</div>
+	</div>
+</div>
+<br>
+<div id="carouselExampleControls" class="carousel slide justify-content-center" data-bs-ride="carousel">
+	<div class="carousel-inner">
+		<div class="carousel-item active">
+	  		<div class="new_html_code"></div>
+	  		<div class="carousel-caption d-none d-md-block">
+    			<div style="color:red;text-align:center;"><h2>Users</h2></div><br>
+    			<ul>
+    				<li><div style="color:cyan;text-align:center;"><h3>Search and compare thousands of restaurants in your city</h3></div></li>
+    				<li><div style="color:cyan;text-align:center;"><h3>Filter restaurants according to your custom choice</h3></div></li>
+    				<li><div style="color:cyan;text-align:center;"><h3>Book a table for free</h3></div></li>
+    				<li><div style="color:cyan;text-align:center;"><h3>Write reviews and rate your food</h3></div></li>
+    			</ul>	
+  			</div>
+		</div>
+		<div class="carousel-item">
+	  		<div class="new_html_code"></div>
+	  		<div class="carousel-caption d-none d-md-block">
+    			<div style="color:red;text-align:center;"><h2>Restaurants</h2></div><br>
+    			<ul>
+    				<li><div style="color:cyan;text-align:center;"><h3>Register for free</h3></div></li>
+    				<li><div style="color:cyan;text-align:center;"><h3>Leverage our network to boost your sales</h3></div></li>
+    				<li><div style="color:cyan;text-align:center;"><h3>Accept or reject table bookings</h3></div></li>
+    				<li><div style="color:cyan;text-align:center;"><h3>Use live ratings and reviews to improve your service</h3></div></li>
+    			</ul>	
+  			</div>
+		</div>
+		
+  	</div>
+  	<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Previous</span>
+  	</button>
+  	<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Next</span>
+  	</button>
+</div>
 {% endblock %}
