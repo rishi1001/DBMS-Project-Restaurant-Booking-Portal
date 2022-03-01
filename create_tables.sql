@@ -28,6 +28,7 @@ drop index if exists index9;
 drop index if exists index10;
 drop index if exists index11;
 drop index if exists index12;
+drop index if exists index13;
 
 drop materialized view if exists popular;
 drop PROCEDURE if exists refresh_popular;
