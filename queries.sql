@@ -18,14 +18,12 @@ SELECT restaurants.name,url,restaurants.restaurantid,address,listedref.name,loca
 
 SELECT name FROM cuisinesref ORDER BY name;
 
-UPDATE phones  SET phone = 9999999999 WHERE restaurantid = 1;
-
 UPDATE bookings SET status = 'ACCEPTED' WHERE bookingid = 1;
 
 SELECT bookingid,restaurants.name,person,date,time,status,restaurants.restaurantid FROM bookings,restaurants where userid =1 and restaurants.restaurantid = bookings.restaurantid  order by date asc, time asc;
 
 SELECT reviewid, rating FROM reviews WHERE restaurantid = 1 and userid = 1 limit 1;
 
-INSERT INTO user_login VALUES (1,'rishi','a');
+INSERT INTO user_login VALUES (1000000,'notme123','pass123');
 
 SELECT locationid FROM locationref ORDER BY locationid DESC limit 1;
