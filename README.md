@@ -1,4 +1,6 @@
-# DBMS Project
+# DBMS Project - FoodBytes, a restaurant booking portal
+
+## For Details : Report.pdf.
 
 
 ## To Use the Project: 
